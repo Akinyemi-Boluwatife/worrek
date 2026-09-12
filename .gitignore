@@ -1,0 +1,12 @@
+node_modules/
+.next/
+dist/
+*.tsbuildinfo
+.env*
+!.env.example
+AGENTS.md
+CLAUDE.md
+docs/hono-llms-full.txt
+README.md
+.DS_Store
+*.log
