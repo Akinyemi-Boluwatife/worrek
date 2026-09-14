@@ -3,7 +3,7 @@ import { cors } from "hono/cors";
 import { sql } from "drizzle-orm";
 import type { Client } from "pg";
 
-import { users } from "./db/schema";
+import { users, waitlist } from "./db/schema";
 import { createDb } from "./db";
 
 const app = new Hono<{ Bindings: CloudflareBindings }>();
@@ -71,6 +71,34 @@ app.get("/api/users", async (c) => {
       },
       500,
     );
+  } finally {
+    await closeClient(client);
+  }
+});
+
+app.get("/api/waitlist", async (c) => {
+  let client: Client | undefined;
+
+  try {
+    const connection = await createDb(c.env.HYPERDRIVE);
+
+    client = connection.client;
+    const db = connection.db;
+
+    const allWaitlist = await db.select().from(waitlist);
+
+    return c.json({
+      data: allWaitlist,
+    });
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        message: "GET /api/waitlist failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+    );
+
+    return c.json({ message: "Failed to fetch waitlist" }, 500);
   } finally {
     await closeClient(client);
   }
