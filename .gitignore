@@ -4,6 +4,8 @@ dist/
 *.tsbuildinfo
 .env*
 !.env.example
+.agents/
+skills-lock.json
 AGENTS.md
 CLAUDE.md
 docs/hono-llms-full.txt
