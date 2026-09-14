@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f8f5">
+  <meta name="description" content="Worrek is an AI-powered document editor. Write, edit, and improve Word documents faster and more easily.">
+  <title>Worrek — Your document editor, with AI built in.</title>
+  <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+  <link rel="preload" href="assets/manrope-variable.ttf" as="font" type="font/ttf" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <svg class="icon-definitions" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M5 3h9l5 5v13H5zM14 3v6h5M9 13h6M9 17h6"/></symbol>
+    <symbol id="i-undo" viewBox="0 0 24 24"><path d="m8 4-5 5 5 5M3 9h11a6 6 0 0 1 0 12"/></symbol>
+    <symbol id="i-paste" viewBox="0 0 24 24"><path d="M9 5H5v16h14V5h-4M9 3h6v5H9zM9 12h6M9 16h6"/></symbol>
+    <symbol id="i-align" viewBox="0 0 24 24"><path d="M4 5h16M4 10h10M4 15h16M4 20h10"/></symbol>
+    <symbol id="i-center" viewBox="0 0 24 24"><path d="M4 5h16M7 10h10M4 15h16M7 20h10"/></symbol>
+    <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 5h11M9 12h11M9 19h11M3 5h1M3 12h1M3 19h1"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6"/><path d="m15 15 6 6"/></symbol>
+    <symbol id="i-clip" viewBox="0 0 24 24"><path d="m8 13 7-7a3 3 0 0 1 4 4L9 20a5 5 0 0 1-7-7L13 2M6 15l8-8"/></symbol>
+  </defs></svg>
+  <header class="nav wrap">
+    <a class="wordmark" href="#" aria-label="Worrek home"><img src="assets/mark.svg" alt="" width="34" height="34">Worrek</a>
+    <a class="button button-nav" href="#">Join waitlist</a>
+  </header>
+  <main id="main">
+    <section class="hero wrap" aria-labelledby="hero-title">
+      <h1 id="hero-title">Write, review, edit, format<br><span>documents with AI</span></h1>
+      <p class="hero-description">Worrek uses AI to make working with documents faster, easier, and more efficient.</p>
+      <a class="button button-primary" href="#">Request early access</a>
+      <div class="document-doodle" aria-hidden="true"><svg viewBox="0 0 84 104" fill="none"><path d="M10 4h43l20 21v73H10z" fill="#fff" stroke="#a0b4d4" stroke-width="1.3"/><path d="M53 4v22h20M24 43h34M24 53h27M24 63h32" stroke="#a0b4d4" stroke-width="1.3" stroke-linecap="round"/><path d="M22 73h35v11H22z" fill="#e4ecff"/><path d="m27 79 4-4 5 4 10-8" stroke="#4878da" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg><span>.docx</span></div>
+      <div class="edit-doodle" aria-hidden="true"><span class="selection-corner tl"></span><span class="selection-corner tr"></span><span class="selection-corner bl"></span><span class="selection-corner br"></span>Aa<svg class="cursor" viewBox="0 0 26 34"><path d="m3 2 20 19-10 1-5 10z" fill="#4274dc" stroke="#f8f8f5" stroke-width="2"/></svg></div>
+      <div class="hero-ornaments" aria-hidden="true">
+        <div class="floating-image"><svg viewBox="0 0 84 70" fill="none"><rect x="1" y="1" width="82" height="68" rx="5" fill="white" stroke="#b6c6df"/><rect x="8" y="8" width="68" height="48" rx="2" fill="#edf3ff"/><circle cx="59" cy="21" r="6" fill="#b2c9f1"/><path d="m8 48 20-22 19 19 11-10 18 21H8z" fill="#8caee7"/><path d="m8 48 20-22 19 19 11-10" stroke="#668ed2"/><path d="M29 62h26" stroke="#bdcbe0" stroke-linecap="round"/></svg></div>
+        <div class="floating-ai"><svg viewBox="0 0 64 64" fill="none"><rect x="1" y="1" width="62" height="62" rx="12" fill="#edf3ff" stroke="#b9ccec"/><path d="M18 42 26 21l8 21M21 35h10M41 22v20M38 22h6M38 42h6" stroke="#527dca" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="floating-network"><svg viewBox="0 0 70 70" fill="none"><circle cx="35" cy="35" r="33" fill="white" stroke="#c1cfe4"/><path d="m35 17 17 10v18L35 55 18 45V27zM35 17v38M18 27l34 18M52 27 18 45" stroke="#91acda" stroke-width="1.3"/><g fill="#648bd0"><circle cx="35" cy="17" r="3"/><circle cx="52" cy="27" r="3"/><circle cx="52" cy="45" r="3"/><circle cx="35" cy="55" r="3"/><circle cx="18" cy="45" r="3"/><circle cx="18" cy="27" r="3"/><circle cx="35" cy="36" r="4"/></g></svg></div>
+      </div>
+    </section>
+    <section class="preview-section" aria-labelledby="preview-label">
+      <div class="preview-caption"><span id="preview-label">YOUR DOCUMENT. YOUR AI. ONE WORKSPACE.</span><span class="preview-status">Editor concept <span aria-hidden="true">↙</span></span></div>
+      <figure class="editor" role="img" aria-label="Worrek AI word processor concept. A project brief with a Word-style formatting ribbon and selected overview text sits beside an AI assistant suggesting a concise rewrite. A prompt composer is at the bottom of the AI panel. This is a static illustration, not an interactive editor.">
+        <div class="editor-workspace" aria-hidden="true">
+          <div class="word-processor">
+            <div class="editor-tabs"><span class="file-tab">File</span><span class="active-tab">Home</span><span>Insert</span><span>Layout</span><span>Review</span><span>View</span><span class="editing-mode">✎ &nbsp; Editing <small>⌄</small></span></div>
+            <div class="ribbon">
+              <div class="clipboard-group"><div class="undo-stack"><svg class="icon"><use href="#i-undo"/></svg><svg class="icon redo"><use href="#i-undo"/></svg></div><div class="paste-tool"><svg class="icon"><use href="#i-paste"/></svg><span>Paste <small>⌄</small></span></div></div>
+              <div class="font-group"><div class="ribbon-row"><span class="select font-select">Georgia <small>⌄</small></span><span class="select size-select">11 <small>⌄</small></span></div><div class="ribbon-row formatting"><b>B</b><em>I</em><u>U</u><span class="strike">S</span><span class="font-color">A</span><span class="highlight-tool">ab</span><small>⌄</small></div></div>
+              <div class="paragraph-group"><div class="ribbon-row"><span class="selected-tool"><svg class="icon"><use href="#i-align"/></svg></span><svg class="icon"><use href="#i-center"/></svg><svg class="icon right-align"><use href="#i-align"/></svg><span>↕ <small>⌄</small></span></div><div class="ribbon-row"><svg class="icon"><use href="#i-list"/></svg><span class="number-list">1≡</span><span class="indent-tool">⇥</span><span>¶</span></div></div>
+              <div class="styles-group"><span class="select">Normal text <small>⌄</small></span><span class="ribbon-label">Styles</span></div>
+              <div class="find-group"><svg class="icon"><use href="#i-search"/></svg><span class="ribbon-label">Find</span></div>
+            </div>
+            <div class="document-stage">
+              <div class="ruler"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span></div>
+              <article class="document-page">
+                <div class="document-kicker">STUDIO NORTH / PROJECT BRIEF</div>
+                <h2>Website refresh</h2>
+                <p class="document-subtitle">A clearer story. A better experience.</p>
+                <div class="document-rule"></div>
+                <h3>Overview</h3>
+                <p><mark>The goal of this project is to refresh our current website so that people can more easily understand our product, explore what it offers, and find their way around.</mark><span class="text-caret"></span></p>
+                <p>The new site should help visitors understand what we do, find what they need, and take the next step with confidence.</p>
+                <h3>What we’re working toward</h3>
+                <ul><li>A focused story, from the first headline to the last detail.</li><li>Simple navigation that makes every page easy to find.</li><li>A consistent experience across desktop and mobile.</li></ul>
+                <h3>Next steps</h3>
+                <p>Align on the direction, refine the first draft, and turn the strongest ideas into a plan.</p>
+                <div class="page-bottom"><span>STUDIO NORTH</span><span>01</span></div>
+              </article>
+            </div>
+            <div class="document-status"><span>Page 1 of 1 <i></i> 126 words</span><span>English (US)</span><span class="zoom">− <span class="zoom-track"></span> + <b>100%</b></span></div>
+          </div>
+          <aside class="assistant-panel">
+            <div class="assistant-header"><span>Worrek AI Agent</span><span class="assistant-menu">＋ <span>···</span></span></div>
+            <div class="conversation">
+              <div class="conversation-context"><svg class="icon"><use href="#i-doc"/></svg> Working with your document</div>
+              <div class="user-message">Make the overview more concise and confident.</div>
+              <div class="assistant-message"><p>Here’s a tighter version that keeps the focus on the project.</p>
+                <div class="rewrite"><span class="rewrite-label">SUGGESTED REWRITE</span><p>We’re refreshing our website to make our product clearer, easier to explore, and simpler to use.</p></div>
+                <div class="suggestion-actions"><span class="apply-suggestion">Apply to document</span><span class="retry">↻</span></div>
+              </div>
+            </div>
+            <div class="composer"><div class="context-chip"><svg class="icon"><use href="#i-doc"/></svg> Selected text <span>×</span></div><p>Ask AI to write, edit, or summarize…</p><div class="composer-tools"><svg class="icon"><use href="#i-clip"/></svg><span>Use document <small>⌄</small></span><span class="send-arrow">↑</span></div></div>
+            <div class="assistant-footnote">You’re in control of every edit.</div>
+          </aside>
+        </div>
+      </figure>
+      <p class="concept-note">A first look at Worrek. The editor is taking shape.</p>
+    </section>
+
+    <section class="features wrap" aria-labelledby="why-title">
+      <header class="features-heading">
+        <p class="section-kicker">BUILT FOR THE WAY DOCUMENTS ACTUALLY GET DONE.</p>
+        <h2 id="why-title">Why use <span>Worrek?</span></h2>
+        <p>Keep the tools you know. Bring AI into the document when it helps.</p>
+      </header>
+
+      <article class="feature-row">
+        <div class="feature-copy">
+          <h3>Edit with simple instructions</h3>
+          <p>Tell Worrek what you want changed in plain language. Rewrite a paragraph, improve the tone, shorten a section, fix grammar, or make your writing clearer without leaving the document.</p>
+        </div>
+        <div class="feature-demo demo-instructions" role="img" aria-label="Animated Worrek editor demonstration: text is selected, a request is entered in the AI panel, and the selected paragraph is replaced with a clearer version.">
+          <div class="demo-chrome" aria-hidden="true">
+            <div class="demo-tabs"><span class="demo-tab-active">Home</span><span>Insert</span><span>Layout</span><span>Review</span><span class="demo-mode">✎ Editing</span></div>
+            <div class="demo-toolbar"><span>↶</span><span>↷</span><i></i><span class="demo-select">Manrope⌄</span><span class="demo-select demo-size">11⌄</span><b>B</b><em>I</em><u>U</u><i></i><span>≡</span><span>☷</span></div>
+            <div class="demo-workarea">
+              <div class="demo-canvas">
+                <div class="demo-page">
+                  <span class="demo-doc-label">PRODUCT LAUNCH / DRAFT 02</span>
+                  <h4>Meet the next chapter.</h4>
+                  <span class="demo-rule"></span>
+                  <h5>Opening note</h5>
+                  <p class="demo-change-copy"><span class="before demo-selection">Our team has worked very hard to create a new product that we believe can make planning projects easier for everyone.</span><span class="after">Plan projects with less friction, from the first idea to the final detail.</span></p>
+                  <p>Built for focused teams who want a clear path from thinking to doing.</p>
+                  <h5>What matters</h5>
+                  <p>Keep priorities visible, give every task an owner, and make room for the work that matters most.</p>
+                </div>
+              </div>
+              <aside class="demo-ai">
+                <div class="demo-ai-head"><span>Worrek AI Agent</span><span>···</span></div>
+                <div class="demo-chat"><div class="demo-context">Selected paragraph</div><div class="demo-prompt"><span class="typed-text">Make this shorter and more confident.</span></div><div class="demo-thinking"><span></span><span></span><span></span></div><div class="demo-response"><p>I’ve tightened the opening and kept the main idea.</p></div></div>
+                <div class="demo-composer"><span>Ask Worrek to edit…</span><b>↑</b></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature-row feature-row--reverse">
+        <div class="feature-copy">
+          <h3>Handle bigger edits with AI</h3>
+          <p>Worrek can help with more than small text changes. Ask it to reorganize a section, improve document structure, rewrite multiple paragraphs, or make changes across a longer document while keeping the context in mind.</p>
+        </div>
+        <div class="feature-demo demo-bigger" role="img" aria-label="Animated Worrek editor demonstration: the AI works through three areas of a longer document and marks each revision complete.">
+          <div class="demo-chrome" aria-hidden="true">
+            <div class="demo-tabs"><span class="demo-tab-active">Home</span><span>Insert</span><span>Layout</span><span>Review</span><span class="demo-mode">✎ Editing</span></div>
+            <div class="demo-toolbar"><span>↶</span><span>↷</span><i></i><span class="demo-select">Georgia⌄</span><span class="demo-select demo-size">11⌄</span><b>B</b><em>I</em><u>U</u><i></i><span>≡</span><span>☷</span></div>
+            <div class="demo-workarea">
+              <div class="demo-canvas">
+                <div class="demo-page demo-long-page">
+                  <span class="demo-doc-label">FIELDNOTE / ANNUAL REPORT</span>
+                  <h4>One year of progress</h4><span class="demo-rule"></span>
+                  <div class="multi-section section-one"><h5>01 / Overview <b>✓</b></h5><p>We grew carefully, learned quickly, and built a stronger foundation for what comes next.</p><div class="edit-sweep"></div></div>
+                  <div class="multi-section section-two"><h5>02 / The work <b>✓</b></h5><p>Three focused initiatives helped teams move with more clarity across the organization.</p><div class="edit-sweep"></div></div>
+                  <div class="multi-section section-three"><h5>03 / Looking ahead <b>✓</b></h5><p>Next year is about turning that foundation into useful, lasting momentum.</p><div class="edit-sweep"></div></div>
+                </div>
+              </div>
+              <aside class="demo-ai">
+                <div class="demo-ai-head"><span>Worrek AI Agent</span><span>···</span></div>
+                <div class="demo-chat bigger-chat"><div class="demo-context">Entire document</div><div class="demo-prompt">Improve the structure and rewrite the three main sections.</div><div class="demo-plan"><span>Working through your document</span><ol><li><i></i>Clarify the overview</li><li><i></i>Reorder the middle section</li><li><i></i>Strengthen the conclusion</li></ol><div class="demo-progress"><span></span></div></div></div>
+                <div class="demo-composer"><span>Ask Worrek to edit…</span><b>↑</b></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature-row">
+        <div class="feature-copy">
+          <h3>Write and improve in one workspace</h3>
+          <p>Write normally when you want to, then use AI whenever you need help. Worrek combines familiar document editing tools and AI in the same workspace, so you do not have to keep moving text between a word processor and a separate chatbot.</p>
+        </div>
+        <div class="feature-demo demo-workflow" role="img" aria-label="Animated Worrek editor demonstration: a sentence is typed manually, the writer asks AI for an idea, and manual writing continues in the same document.">
+          <div class="demo-chrome" aria-hidden="true">
+            <div class="demo-tabs"><span class="demo-tab-active">Home</span><span>Insert</span><span>Layout</span><span>Review</span><span class="demo-mode">✎ Editing</span></div>
+            <div class="demo-toolbar"><span>↶</span><span>↷</span><i></i><span class="demo-select">Georgia⌄</span><span class="demo-select demo-size">11⌄</span><b>B</b><em>I</em><u>U</u><i></i><span>≡</span><span>☷</span></div>
+            <div class="demo-workarea">
+              <div class="demo-canvas">
+                <div class="demo-page">
+                  <span class="demo-doc-label">PERSONAL ESSAY / WORKING DRAFT</span>
+                  <h4>The quiet work</h4><span class="demo-rule"></span>
+                  <p>Good ideas rarely arrive fully formed. They begin as a loose thread, waiting to be followed.</p>
+                  <p class="manual-line"><span>Writing gives the thought somewhere to go.</span><i></i></p>
+                  <p class="continued-line"><span>And revision helps it become what it was trying to say.</span><i></i></p>
+                  <p>A first draft is a place to begin. Return to it with fresh eyes, follow the strongest idea, and let the rest fall away.</p>
+                </div>
+              </div>
+              <aside class="demo-ai">
+                <div class="demo-ai-head"><span>Worrek AI Agent</span><span>···</span></div>
+                <div class="demo-chat workflow-chat"><div class="demo-context">Working with your draft</div><div class="demo-prompt"><span class="workflow-prompt">Give me a bridge to the idea of revision.</span></div><div class="demo-response workflow-response"><p>Try connecting the act of writing with the clarity that comes from revisiting it.</p></div></div>
+                <div class="demo-composer"><span>Ask Worrek to edit…</span><b>↑</b></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="feature-row feature-row--reverse">
+        <div class="feature-copy">
+          <h3>Stay in control of every change</h3>
+          <p>AI should help you edit, not take over your document. Review suggested changes before they become part of your work, then keep, adjust, or reject them.</p>
+        </div>
+        <div class="feature-demo demo-control" role="img" aria-label="Animated Worrek editor demonstration: one AI change is accepted and a second is rejected while the document remains under the writer’s control.">
+          <div class="demo-chrome" aria-hidden="true">
+            <div class="demo-tabs"><span class="demo-tab-active">Home</span><span>Insert</span><span>Layout</span><span>Review</span><span class="demo-mode">✎ Reviewing</span></div>
+            <div class="demo-toolbar"><span>↶</span><span>↷</span><i></i><span class="demo-select">Manrope⌄</span><span class="demo-select demo-size">11⌄</span><b>B</b><em>I</em><u>U</u><i></i><span>≡</span><span>☷</span></div>
+            <div class="demo-workarea">
+              <div class="demo-canvas">
+                <div class="demo-page">
+                  <span class="demo-doc-label">WEEKLY UPDATE / FRIDAY</span>
+                  <h4>What we shipped</h4><span class="demo-rule"></span>
+                  <h5>Project status</h5>
+                  <p class="tracked-change accepted-change"><span class="tracked-before">The new flow is quite a lot easier to use.</span><span class="tracked-after">The new flow is faster and easier to use.</span></p>
+                  <h5>Next week</h5>
+                  <p class="tracked-change rejected-change"><span class="tracked-before">We’ll test the final details with the team.</span><span class="tracked-after">We shall undertake comprehensive validation.</span></p>
+                </div>
+              </div>
+              <aside class="demo-ai">
+                <div class="demo-ai-head"><span>Worrek AI Agent</span><span>2 suggestions</span></div>
+                <div class="review-list"><div class="review-card review-accept"><span>CLARITY</span><p>“The new flow is <del>quite a lot</del> <ins>faster and</ins> easier to use.”</p><div><b>Accept</b><i>Reject</i></div></div><div class="review-card review-reject"><span>TONE</span><p>“We <del>will test</del> <ins>shall undertake comprehensive validation of</ins> the final details.”</p><div><b>Accept</b><i>Reject</i></div></div></div>
+                <div class="demo-composer"><span>Ask about these changes…</span><b>↑</b></div>
+              </aside>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="faq wrap" aria-labelledby="faq-title">
+      <div class="faq-intro">
+        <p class="faq-kicker">QUESTIONS, ANSWERED.</p>
+        <h2 id="faq-title">A little more<br>about <span>Worrek.</span></h2>
+        <p>What it is, how it works, and what we’re building toward.</p>
+        <span class="faq-count">FAQ &nbsp; / &nbsp; 01—11</span>
+      </div>
+
+      <div class="faq-list">
+        <details open>
+          <summary><span>What is Worrek?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Worrek is an AI-powered document editor that brings familiar word-processing tools and AI into one workspace. You can write, edit, format, and improve documents while using the built-in AI assistant to help rewrite content, summarize text, refine ideas, and make document work faster and easier.</p></div>
+        </details>
+        <details>
+          <summary><span>Can I use Worrek for free?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Yes. Worrek will include a free plan for users who want to create and edit documents and try its AI features. Paid plans will provide higher usage limits and additional capabilities for people who use Worrek more extensively.</p></div>
+        </details>
+        <details>
+          <summary><span>What is an AI document editor?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>An AI document editor combines a traditional word processor with an AI assistant that can understand and work directly with your document.</p><p>Instead of copying text between a document editor and a separate AI chatbot, you can write, format, rewrite, summarize, and improve your content from the same workspace.</p></div>
+        </details>
+        <details>
+          <summary><span>How is an AI document editor different from an AI document generator?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>An AI document generator mainly creates content or files from a prompt.</p><p>Worrek is designed to be a complete editing workspace. You can create a document yourself, open an existing one, format and edit it normally, and use AI whenever you need help with writing, rewriting, reviewing, or improving the document.</p></div>
+        </details>
+        <details>
+          <summary><span>Can Worrek replace Microsoft Word or Google Docs?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Worrek is being built to handle many of the everyday tasks you would expect from a modern word processor, while adding AI directly into the editing experience.</p><p>The goal is to give you the document-editing tools you need without having to switch between a word processor and a separate AI application.</p></div>
+        </details>
+        <details>
+          <summary><span>What can Worrek’s AI help me do?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Worrek’s AI can assist with tasks such as rewriting text, improving clarity, fixing grammar, changing tone, summarizing content, expanding ideas, shortening sections, brainstorming, and helping you work through larger documents.</p><p>The AI works alongside the editor so you can make changes without constantly leaving your document.</p></div>
+        </details>
+        <details>
+          <summary><span>Which AI model does Worrek use?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Worrek is designed so you don’t need to worry about choosing or configuring AI models yourself. The AI experience is built directly into the product, and Worrek handles the underlying technology for you.</p><p>The focus is simply on getting useful writing and editing assistance when you need it.</p></div>
+        </details>
+        <details>
+          <summary><span>Can Worrek edit Word documents?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Worrek is being designed with Word documents in mind, including support for working with DOCX files. The goal is to let you open a Word document, edit and format it, use AI to improve the content, and export your work when you’re finished.</p></div>
+        </details>
+        <details>
+          <summary><span>Do I have to use AI to use Worrek?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>No. Worrek is a document editor first. You can write and edit documents normally and use the AI assistant only when you want help.</p><p>AI is there to speed up your workflow, not replace the normal editing experience.</p></div>
+        </details>
+        <details>
+          <summary><span>Is Worrek just an AI chatbot?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>No. Worrek is a full document-editing workspace with an AI assistant built alongside it.</p><p>You have the document editor on one side and AI assistance available when needed, so the AI works with the document you’re already creating rather than forcing you into a separate chat experience.</p></div>
+        </details>
+        <details>
+          <summary><span>Is Worrek secure?</span><span class="faq-toggle" aria-hidden="true"></span></summary>
+          <div class="faq-answer"><p>Worrek is being built with document privacy and security as an important part of the product. Documents and AI interactions will be handled using secure infrastructure and appropriate protections for user data.</p><p>More detailed information about storage, encryption, sharing, and data retention will be published before launch.</p></div>
+        </details>
+      </div>
+    </section>
+  </main>
+  <footer class="footer wrap"><a class="wordmark" href="#" aria-label="Worrek home"><img src="assets/mark.svg" alt="" width="25" height="25">Worrek</a><span>Write. Edit. Move forward.</span><span>© 2026 Worrek</span></footer>
+</body>
+</html>
