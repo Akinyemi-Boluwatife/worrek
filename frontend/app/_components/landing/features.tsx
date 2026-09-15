@@ -4,7 +4,7 @@ import { FeaturesList } from "./featuresList";
 export function Features() {
   return (
     <section
-      className="page-wrap pt-[154px] max-[1200px]:pt-[132px] max-[951px]:pt-28 max-[651px]:w-[calc(100%_-_40px)] max-[651px]:pt-24"
+      className="page-wrap pt-[154px] max-[1200px]:pt-[132px] max-[951px]:pt-28 max-[651px]:w-[calc(100%_-_24px)] max-[651px]:pt-24"
       aria-labelledby="why-title"
     >
       <header className="mx-auto mb-[100px] max-w-[710px] text-center max-[951px]:mb-[82px] max-[651px]:mb-[70px]">
