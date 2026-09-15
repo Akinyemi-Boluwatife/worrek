@@ -1,30 +1,27 @@
-import { connection } from "next/server";
+import { Faq } from "@/app/_components/landing/faq";
+import { Features } from "@/app/_components/landing/features";
+import { Hero } from "@/app/_components/landing/hero";
+import { ProductPreview } from "@/app/_components/landing/product-preview";
+import { SiteFooter } from "@/app/_components/landing/site-footer";
+import { SiteHeader } from "@/app/_components/landing/site-header";
 
-type HealthResponse = {
-  status: string;
-};
-
-export default async function Home() {
-  await connection();
-
-  const apiUrl = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiUrl) {
-    throw new Error("API_URL is not configured");
-  }
-
-  const healthUrl = new URL("/api/health", apiUrl);
-  const response = await fetch(healthUrl, { cache: "no-store" });
-
-  if (!response.ok) {
-    throw new Error(`Backend request failed with status ${response.status}`);
-  }
-
-  const health: HealthResponse = await response.json();
-
+export default function Home() {
   return (
-    <main>
-      <h1>API status: {health.status}</h1>
-    </main>
+    <>
+      <a
+        href="#main"
+        className="absolute top-[10px] left-[10px] z-10 -translate-y-[160%] bg-white p-3 focus:translate-y-0"
+      >
+        Skip to content
+      </a>
+      <SiteHeader />
+      <main id="main" tabIndex={-1} className="outline-none">
+        <Hero />
+        <ProductPreview />
+        <Features />
+        <Faq />
+      </main>
+      <SiteFooter />
+    </>
   );
 }
