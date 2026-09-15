@@ -1,6 +1,5 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import type { Client } from "pg";
 
 import { waitlistRoute } from "./routes/waitlist.route";
 import { usersRoute } from "./routes/user.route";
