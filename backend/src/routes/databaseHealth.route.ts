@@ -9,7 +9,7 @@ type Bindings = {
 
 export const databaseHealthRoute = new Hono<{ Bindings: Bindings }>();
 
-databaseHealthRoute.get("/api/health/database", async (c) => {
+databaseHealthRoute.get("/", async (c) => {
   try {
     const db = await createDb(c.env.HYPERDRIVE);
 

@@ -11,7 +11,7 @@ type Bindings = {
 
 export const usersRoute = new Hono<{ Bindings: Bindings }>();
 
-usersRoute.get("/api/users", async (c) => {
+usersRoute.get("/", async (c) => {
   try {
     const db = await createDb(c.env.HYPERDRIVE);
 
@@ -37,38 +37,34 @@ usersRoute.get("/api/users", async (c) => {
   }
 });
 
-usersRoute.post(
-  "/api/users",
-  zValidator("json", createUserSchema),
-  async (c) => {
-    try {
-      const db = await createDb(c.env.HYPERDRIVE);
+usersRoute.post("/", zValidator("json", createUserSchema), async (c) => {
+  try {
+    const db = await createDb(c.env.HYPERDRIVE);
 
-      const data = c.req.valid("json");
+    const data = c.req.valid("json");
 
-      const [newUser] = await db.insert(users).values(data).returning();
+    const [newUser] = await db.insert(users).values(data).returning();
 
-      return c.json(
-        {
-          message: "User created successfully",
-          data: newUser,
-        },
-        201,
-      );
-    } catch (error) {
-      console.error(
-        JSON.stringify({
-          message: "POST /api/users failed",
-          error: error instanceof Error ? error.message : "Unknown error",
-        }),
-      );
+    return c.json(
+      {
+        message: "User created successfully",
+        data: newUser,
+      },
+      201,
+    );
+  } catch (error) {
+    console.error(
+      JSON.stringify({
+        message: "POST /api/users failed",
+        error: error instanceof Error ? error.message : "Unknown error",
+      }),
+    );
 
-      return c.json(
-        {
-          message: "Failed to create user",
-        },
-        500,
-      );
-    }
-  },
-);
+    return c.json(
+      {
+        message: "Failed to create user",
+      },
+      500,
+    );
+  }
+});
