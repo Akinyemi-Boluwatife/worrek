@@ -1,9 +1,10 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export function Brand({ compact = false }: { compact?: boolean }) {
   return (
-    <a
-      href="#"
+    <Link
+      href="/"
       aria-label="Worrek home"
       className={`inline-flex items-center leading-none font-extrabold ${
         compact
@@ -21,6 +22,6 @@ export function Brand({ compact = false }: { compact?: boolean }) {
         }
       />
       Worrek
-    </a>
+    </Link>
   );
 }
