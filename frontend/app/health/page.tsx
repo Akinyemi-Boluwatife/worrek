@@ -1,5 +1,7 @@
 import { connection } from "next/server";
 
+import { api } from "@/lib/api";
+
 type HealthResponse = {
   status: string;
 };
@@ -7,14 +9,7 @@ type HealthResponse = {
 export default async function HealthPage() {
   await connection();
 
-  const apiUrl = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL;
-
-  if (!apiUrl) {
-    throw new Error("API_URL is not configured");
-  }
-
-  const healthUrl = new URL("/api/health", apiUrl);
-  const response = await fetch(healthUrl, { cache: "no-store" });
+  const response = await api.databaseHealth();
 
   if (!response.ok) {
     throw new Error(`Backend request failed with status ${response.status}`);
