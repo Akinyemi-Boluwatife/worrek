@@ -4,6 +4,7 @@ import { zValidator } from "@hono/zod-validator";
 import { createDb } from "../db";
 import { waitlist } from "../db/schema";
 import { joinWaitlistSchema } from "../validators/waitlist.validator";
+import { requireAuth } from "../middleware/requireAuth.middleware";
 
 type Bindings = {
   HYPERDRIVE: Hyperdrive;
@@ -11,7 +12,7 @@ type Bindings = {
 
 export const waitlistRoute = new Hono<{ Bindings: Bindings }>();
 
-waitlistRoute.get("/", async (c) => {
+waitlistRoute.get("/", requireAuth, async (c) => {
   try {
     const db = await createDb(c.env.HYPERDRIVE);
 
@@ -46,9 +47,7 @@ waitlistRoute.post("/", zValidator("json", joinWaitlistSchema), async (c) => {
     const [person] = await db
       .insert(waitlist)
       .values(data)
-      .onConflictDoNothing({
-        target: waitlist.email,
-      })
+      .onConflictDoNothing()
       .returning();
 
     if (!person) {
