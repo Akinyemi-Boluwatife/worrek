@@ -34,7 +34,7 @@ export function WaitlistForm() {
               type="text"
               name="firstName"
               autoComplete="given-name"
-              placeholder="Ada"
+              placeholder="Daniel"
               required
               maxLength={100}
             />
@@ -47,7 +47,7 @@ export function WaitlistForm() {
               type="text"
               name="lastName"
               autoComplete="family-name"
-              placeholder="Lovelace"
+              placeholder="Patrick"
               maxLength={100}
             />
           </label>
