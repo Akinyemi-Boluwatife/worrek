@@ -1,0 +1,133 @@
+.frame {
+  --doc-bg: #eef1f6;
+  --doc-bg-subtle: #f7f8fa;
+  --doc-surface: #ffffff;
+  --doc-surface-hover: #eceff3;
+  --doc-text: #242831;
+  --doc-text-muted: #737883;
+  --doc-text-subtle: #8a929e;
+  --doc-border: #e3e6eb;
+  --doc-border-light: #eef0f4;
+  --doc-border-input: #d9dde4;
+  --doc-primary: #4274dc;
+  --doc-primary-hover: #3263c5;
+  --doc-on-primary: #ffffff;
+  --doc-accent: #4274dc;
+  --doc-bg-hover: #f0f3f7;
+  --doc-toggle-active-bg: #edf3ff;
+  --doc-toggle-active-fg: #4274dc;
+  --doc-shadow: rgba(53, 70, 104, 0.12);
+  --doc-shadow-lg: rgba(53, 70, 104, 0.18);
+}
+
+.frame :global(.docx-editor) {
+  --doc-bg: #eef1f6;
+  --doc-bg-subtle: #f7f8fa;
+  --doc-surface: #ffffff;
+  --doc-surface-hover: #eceff3;
+  --doc-text: #242831;
+  --doc-text-muted: #737883;
+  --doc-text-subtle: #8a929e;
+  --doc-border: #e3e6eb;
+  --doc-border-light: #eef0f4;
+  --doc-border-input: #d9dde4;
+  --doc-primary: #4274dc;
+  --doc-primary-hover: #3263c5;
+  --doc-on-primary: #ffffff;
+  --doc-accent: #4274dc;
+  --doc-bg-hover: #f0f3f7;
+  --doc-toggle-active-bg: #edf3ff;
+  --doc-toggle-active-fg: #4274dc;
+  --doc-shadow: rgba(53, 70, 104, 0.12);
+  --doc-shadow-lg: rgba(53, 70, 104, 0.18);
+}
+
+.menuBar :global(.docx-menubar__menu-root) {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.menuBar :global(.docx-menubar__trigger) {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-family: var(--font);
+  font-size: 11px;
+  color: #777f8c;
+  line-height: 1;
+}
+
+.menuBar :global(.docx-menubar__trigger:hover),
+.menuBar :global(.docx-menubar__trigger[data-open]) {
+  background: #f0f3f7;
+  color: var(--doc-text);
+}
+
+.menuBar :global(.docx-menubar__menu) {
+  font-family: var(--font);
+}
+
+.ribbon:global(.docx-toolbar) {
+  background: #f7f8fa;
+  border: 0;
+  border-radius: 0;
+  flex: none;
+}
+
+.scrollArea :global(.docx-editor__scroll-container) {
+  height: 100%;
+  min-width: 0;
+}
+
+.statusZoom {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  min-height: 0;
+  padding: 0;
+}
+
+@media print {
+  .frame,
+  .workspace {
+    height: auto;
+    overflow: visible;
+    display: block;
+  }
+
+  .documentStage {
+    height: auto;
+  }
+
+  .scrollArea {
+    overflow: visible;
+  }
+
+  .scrollArea :global(.docx-editor__scroll-container) {
+    height: auto;
+    overflow: visible;
+  }
+}
+
+@media (max-width: 950px) {
+  .menuBar :global(.docx-menubar__trigger) {
+    font-size: 10px;
+    padding-inline: 8px;
+  }
+}
+
+@media (max-width: 650px) {
+  .menuBar :global(.docx-menubar__trigger) {
+    font-size: 10px;
+    padding-inline: 8px;
+    white-space: nowrap;
+  }
+
+  .documentStage {
+    height: 60dvh;
+  }
+
+  .aiPanel {
+    min-height: 420px;
+  }
+}

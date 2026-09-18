@@ -1,6 +1,6 @@
 "use server";
 
-import { api } from "@/lib/api";
+import { api } from "./apiConstants";
 
 export async function joinWaitlist(
   _previousState: { success: boolean; message: string },
