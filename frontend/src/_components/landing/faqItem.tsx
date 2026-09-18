@@ -1,4 +1,4 @@
-import type { FAQEntry } from "@/app/constants/faq";
+import type { FAQEntry } from "@/constants/faq";
 
 type FAQItemProps = {
   item: FAQEntry;

@@ -1,4 +1,4 @@
-import { FAQ_ITEMS } from "@/app/constants/faq";
+import { FAQ_ITEMS } from "@/constants/faq";
 
 import { FAQList } from "./faqList";
 

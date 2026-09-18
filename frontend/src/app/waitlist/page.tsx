@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import { Brand } from "@/app/_components/landing/brand";
-import { WaitlistForm } from "@/app/_components/waitlist/waitlist-form";
-import Footer from "../_components/shared/Footer";
+import { Brand } from "@/_components/landing/brand";
+import { WaitlistForm } from "@/_components/waitlist/waitlist-form";
+import Footer from "../../_components/shared/Footer";
 
 export const metadata: Metadata = {
   title: "Join the waitlist — Worrek",

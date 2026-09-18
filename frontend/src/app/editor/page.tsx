@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 
 const Editor = dynamic(
   () =>
-    import("@/app/_components/document-editor/editor").then((m) => m.Editor),
+    import("@/_components/document-editor/editor").then((m) => m.Editor),
   {
     ssr: false,
     loading: () => (

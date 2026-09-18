@@ -1,4 +1,4 @@
-import { FEATURES } from "@/app/constants/features";
+import { FEATURES } from "@/constants/features";
 import { FeaturesList } from "./featuresList";
 
 export function Features() {

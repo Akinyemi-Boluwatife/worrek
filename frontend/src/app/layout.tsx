@@ -3,7 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 
 const manrope = localFont({
-  src: "./fonts/manrope-variable.ttf",
+  src: "../fonts/manrope-variable.ttf",
   variable: "--font-manrope",
   weight: "200 800",
   display: "swap",

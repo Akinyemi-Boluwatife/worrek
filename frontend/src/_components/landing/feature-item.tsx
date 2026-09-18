@@ -1,4 +1,4 @@
-import type { Feature } from "@/app/constants/features";
+import type { Feature } from "@/constants/features";
 
 type FeatureItemProps = {
   feature: Feature;
