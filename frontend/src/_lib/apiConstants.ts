@@ -27,4 +27,12 @@ export const api = {
       body: JSON.stringify(body),
       cache: "no-store",
     }),
+
+  uploadDocument: (body: FormData, cookie?: string) =>
+    request("/api/documents", {
+      method: "POST",
+      headers: cookie ? { cookie } : undefined,
+      body,
+      cache: "no-store",
+    }),
 };

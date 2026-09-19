@@ -11,7 +11,13 @@ import {
 import type { DocxEditorInstance } from "@docx-editor.dev/core/editor";
 import en from "@docx-editor.dev/i18n/en";
 import "@docx-editor.dev/core/styles/editor.css";
+import { LogoutButton } from "@/_components/auth/logout-button";
+import { uploadDocument } from "@/_lib/documents";
+import { useEditorStore } from "@/_stores/editor.store";
 import styles from "./editor.module.css";
+
+const DOCX_MIME =
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 function WordCount() {
   const editor = useDocxEditor();
@@ -38,9 +44,31 @@ export function Editor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const isBlank = buffer === null;
 
+  const currentDocumentTitle = useEditorStore(
+    (state) => state.currentDocumentTitle,
+  );
+  const isDocumentSaved = useEditorStore((state) => state.isDocumentSaved);
+  const saveStatus = useEditorStore((state) => state.saveStatus);
+  const saveError = useEditorStore((state) => state.saveError);
+  const setCurrentDocument = useEditorStore(
+    (state) => state.setCurrentDocument,
+  );
+  const setDocumentTitle = useEditorStore((state) => state.setDocumentTitle);
+  const setSaveStatus = useEditorStore((state) => state.setSaveStatus);
+  const resetDocument = useEditorStore((state) => state.resetDocument);
+
+  const isSaving = saveStatus === "saving";
+  const saveLabel = isSaving
+    ? "Saving…"
+    : isDocumentSaved
+      ? "Saved to Worrek"
+      : "Save to Worrek";
+
   async function onFileSelect(file: File) {
     setBuffer(await file.arrayBuffer());
     setFileName(file.name);
+    resetDocument();
+    setDocumentTitle(file.name.replace(/\.docx$/i, ""));
   }
 
   function onFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -49,12 +77,55 @@ export function Editor() {
     e.target.value = "";
   }
 
-  async function onSave() {
+  async function onSaveToWorrek() {
+    if (isBlank || isSaving || isDocumentSaved) return;
+
+    setSaveStatus("saving");
+
+    try {
+      const out = await editor?.save();
+
+      if (!out) {
+        setSaveStatus(
+          "error",
+          "We couldn't read this document. Please try again.",
+        );
+        return;
+      }
+
+      const file = new File([out], fileName, { type: DOCX_MIME });
+      const formData = new FormData();
+      formData.set("file", file);
+      formData.set("title", fileName.replace(/\.docx$/i, ""));
+
+      const result = await uploadDocument(formData);
+
+      if (result.success) {
+        setCurrentDocument({
+          id: result.document.id,
+          title: result.document.title,
+        });
+        return;
+      }
+
+      setSaveStatus("error", result.message);
+    } catch (error) {
+      console.error(
+        "Saving document to Worrek failed:",
+        error instanceof Error ? error.message : "Unknown error",
+      );
+
+      setSaveStatus(
+        "error",
+        "We couldn't save this document right now. Please try again.",
+      );
+    }
+  }
+
+  async function onSaveDocx() {
     const out = await editor?.save();
     if (!out) return;
-    const blob = new Blob([out], {
-      type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    });
+    const blob = new Blob([out], { type: DOCX_MIME });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -71,8 +142,17 @@ export function Editor() {
         </Link>
         <div className="flex min-w-0 items-center gap-2">
           <span className="max-w-48 truncate text-[12px] text-muted max-[650px]:max-w-28">
-            {fileName}
+            {currentDocumentTitle || fileName}
           </span>
+          {saveStatus === "error" && saveError ? (
+            <span
+              className="max-w-48 truncate text-[11px] text-[#9b4141] max-[650px]:max-w-28"
+              role="alert"
+              title={saveError}
+            >
+              {saveError}
+            </span>
+          ) : null}
           <input
             ref={fileInputRef}
             type="file"
@@ -89,11 +169,20 @@ export function Editor() {
           </button>
           <button
             type="button"
-            onClick={() => void onSave()}
-            className="shrink-0 cursor-pointer rounded-md border border-brand bg-brand px-2.5 py-1.5 text-[12px] font-[650] text-white hover:border-brand-hover hover:bg-brand-hover"
+            onClick={() => void onSaveDocx()}
+            className="shrink-0 cursor-pointer rounded-md border border-[#d9dde4] bg-white px-2.5 py-1.5 text-[12px] font-[650] text-foreground hover:border-[#b8cbed]"
           >
             Save .docx
           </button>
+          <button
+            type="button"
+            onClick={() => void onSaveToWorrek()}
+            disabled={isBlank || isSaving || isDocumentSaved}
+            className="shrink-0 cursor-pointer rounded-md border border-brand bg-brand px-2.5 py-1.5 text-[12px] font-[650] text-white hover:border-brand-hover hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-65"
+          >
+            {saveLabel}
+          </button>
+          <LogoutButton />
         </div>
       </header>
 
@@ -101,9 +190,9 @@ export function Editor() {
         <DocxEditor.Root document={buffer ?? "blank"}>
           <DocxEditor.Menu
             className={`${styles.menuBar} flex shrink-0 items-center gap-0.5 border-b border-[#eef0f4] bg-white px-2.5 font-sans text-[11px] h-[37px] print:hidden`}
-            fileName={fileName.replace(/\.docx$/i, "")}
+            fileName={currentDocumentTitle || fileName.replace(/\.docx$/i, "")}
             onOpen={() => fileInputRef.current?.click()}
-            onSave={() => void onSave()}
+            onSave={() => void onSaveDocx()}
           />
 
           <DocxEditor.Toolbar
@@ -186,7 +275,7 @@ export function Editor() {
                 <span>Worrek AI Agent</span>
                 {!isBlank ? (
                   <span className="max-w-44 truncate text-[10px] font-medium text-[#98a1af]">
-                    {fileName}
+                    {currentDocumentTitle || fileName}
                   </span>
                 ) : (
                   <span className="flex items-center gap-1.5 text-[15px] font-normal text-[#a1a8b4]" aria-hidden="true">

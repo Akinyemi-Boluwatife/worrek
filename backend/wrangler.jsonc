@@ -7,9 +7,15 @@
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
-      "id": "81649edbc3914b109d235615319efb16"
-    }
-  ]
+      "id": "81649edbc3914b109d235615319efb16",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "DOCUMENTS_BUCKET",
+      "bucket_name": "worrek-documents",
+    },
+  ],
   // "vars": {
   //   "MY_VAR": "my-variable"
   // },
