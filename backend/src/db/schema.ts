@@ -1,13 +1,18 @@
 import { sql } from "drizzle-orm";
 import {
   boolean,
+  index,
+  integer,
   pgEnum,
   pgTable,
+  text,
   timestamp,
   uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+
+import { user } from "./auth-schema";
 
 export const waitlistStatus = pgEnum("waitlist_status", [
   "waiting",
@@ -48,4 +53,33 @@ export const waitlist = pgTable(
   (table) => [
     uniqueIndex("waitlist_email_unique").on(sql`lower(${table.email})`),
   ],
+);
+
+export const document = pgTable(
+  "document",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+
+    title: varchar("title", { length: 255 }).notNull(),
+
+    fileName: varchar("file_name", { length: 255 }).notNull(),
+
+    storageKey: text("storage_key").notNull().unique(),
+
+    size: integer("size"),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .defaultNow()
+      .notNull(),
+
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [index("document_user_id_idx").on(table.userId)],
 );
