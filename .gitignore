@@ -4,6 +4,7 @@ dist/
 *.tsbuildinfo
 .env*
 !.env.example
+cookies.txt
 .agents/
 skills-lock.json
 AGENTS.md
