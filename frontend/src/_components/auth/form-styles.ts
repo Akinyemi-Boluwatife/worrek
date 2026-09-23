@@ -1,5 +1,5 @@
 export const authCardClassName =
-  "mx-auto w-full max-w-[440px] rounded-xl border border-[#dce1e8] bg-white p-8 shadow-[0_16px_40px_-32px_#35466852] max-[651px]:p-6";
+  "mx-auto w-full max-w-[520px] rounded-xl border border-[#dce1e8] bg-white p-8 shadow-[0_16px_40px_-32px_#35466852] max-[651px]:p-6";
 
 export const authHeadingClassName =
   "text-[24px] leading-tight font-[650] tracking-[-0.8px]";
@@ -17,7 +17,7 @@ export const authButtonClassName =
   "flex min-h-[52px] w-full items-center justify-center rounded-lg bg-brand px-6 text-[13px] font-[650] text-white transition-colors hover:bg-brand-hover focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-65 motion-reduce:transition-none";
 
 export const authSocialButtonClassName =
-  "flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[#f3f5f8] px-3 text-[13px] font-[650] text-foreground transition-colors hover:bg-[#e8ecf1] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand motion-reduce:transition-none";
+  "flex min-h-11 w-full items-center justify-center gap-2 whitespace-nowrap rounded-lg bg-[#f3f5f8] px-3 text-[13px] font-[650] text-foreground transition-colors hover:bg-[#e8ecf1] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand motion-reduce:transition-none";
 
 export const authDividerClassName = "relative flex items-center justify-center";
 

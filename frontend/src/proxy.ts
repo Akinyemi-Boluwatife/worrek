@@ -8,7 +8,7 @@ export function proxy(request: NextRequest) {
   const isAuthPage = pathname === "/login" || pathname === "/signup";
 
   if (isAuthPage && hasSession) {
-    return NextResponse.redirect(new URL("/editor", request.url));
+    return NextResponse.redirect(new URL("/documents", request.url));
   }
 
   if (!isAuthPage && !hasSession) {
@@ -19,5 +19,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/editor", "/editor/:path*", "/login", "/signup"],
+  matcher: ["/documents", "/editor", "/editor/:path*", "/login", "/signup"],
 };

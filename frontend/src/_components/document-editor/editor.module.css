@@ -79,6 +79,12 @@
   min-width: 0;
 }
 
+.scrollArea :global(.docx-editor__loading) {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .statusZoom {
   background: transparent;
   border: 0;
