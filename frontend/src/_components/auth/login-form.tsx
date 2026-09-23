@@ -40,7 +40,7 @@ export function LoginForm() {
         return;
       }
 
-      router.push("/editor");
+      router.push("/documents");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {

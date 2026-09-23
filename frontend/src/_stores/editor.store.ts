@@ -35,6 +35,11 @@ export const useEditorStore = create<EditorState>((set) => ({
       saveError: "",
     }),
   setDocumentTitle: (currentDocumentTitle) => set({ currentDocumentTitle }),
-  setSaveStatus: (saveStatus, error = "") => set({ saveStatus, saveError: error }),
+  setSaveStatus: (saveStatus, error = "") =>
+    set({
+      saveStatus,
+      saveError: error,
+      isDocumentSaved: saveStatus === "saved",
+    }),
   resetDocument: () => set(initialState),
 }));

@@ -14,3 +14,5 @@ export async function createDb(hyperdrive: HyperdriveBinding) {
 
   return drizzle({ client, relations });
 }
+
+export type Database = Awaited<ReturnType<typeof createDb>>;

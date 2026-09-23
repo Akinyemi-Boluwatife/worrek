@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 
 import { AuthHeader } from "@/_components/auth/auth-header";
 import { LoginCard } from "@/_components/auth/login-card";
-import { requireAuthPagesEnabled } from "@/_lib/auth-pages";
 
 export const metadata: Metadata = {
   title: "Sign in — Worrek",
@@ -11,8 +10,6 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
-  requireAuthPagesEnabled();
-
   return (
     <>
       <AuthHeader />
