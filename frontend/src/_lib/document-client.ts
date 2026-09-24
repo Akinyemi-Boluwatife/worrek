@@ -29,14 +29,6 @@ export type OpenDocumentResult =
     }
   | { success: false; message: string };
 
-async function refreshDocumentList() {
-  try {
-    await documentListChanged();
-  } catch {
-    // The document write already succeeded; a full reload will fetch the list again.
-  }
-}
-
 export async function openDocument(id: string): Promise<OpenDocumentResult> {
   performance.clearMarks("document-open:start");
   performance.clearMarks("document-open:headers");
@@ -115,7 +107,7 @@ export async function saveDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
-      await refreshDocumentList();
+      await documentListChanged().catch(() => {});
       return { success: true, document: body.data };
     }
 
@@ -145,7 +137,7 @@ export async function uploadDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
-      await refreshDocumentList();
+      await documentListChanged().catch(() => {});
       return { success: true, document: body.data };
     }
 
