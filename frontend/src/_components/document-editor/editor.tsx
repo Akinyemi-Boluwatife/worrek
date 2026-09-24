@@ -63,6 +63,7 @@ export function Editor({
     newDocument ? "Untitled document.docx" : "document.docx",
   );
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const moreMenuRef = useRef<HTMLDetailsElement>(null);
   const isBlank = buffer === null && !newDocument;
   const currentDocumentId = useEditorStore((state) => state.currentDocumentId);
 
@@ -109,11 +110,22 @@ export function Editor({
   const isSaving = saveStatus === "saving";
   const saveLabel = isSaving
     ? "Saving…"
+    : currentDocumentId
+      ? "Save changes"
+      : "Save to Worrek";
+  const statusLabel = isSaving
+    ? "Saving…"
     : isDocumentSaved
       ? "Saved to Worrek"
       : currentDocumentId
-        ? "Save changes"
-        : "Save to Worrek";
+        ? "Unsaved changes"
+        : "Not saved yet";
+
+  function beginRename() {
+    setDraftTitle(currentDocumentTitle || fileName.replace(/\.docx$/i, ""));
+    setRenameError("");
+    setIsRenaming(true);
+  }
 
   async function onFileSelect(file: File) {
     ++loadSequence.current;
@@ -227,13 +239,17 @@ export function Editor({
 
   return (
     <div className={`${styles.frame} flex h-dvh min-w-0 flex-col overflow-hidden bg-[#eef1f6]`}>
-      <header className="flex shrink-0 items-center justify-between gap-3 border-b border-[#e3e6eb] bg-white px-4 py-2 print:hidden">
-        <Link href="/documents" className="text-[13px] font-[650] text-foreground">
-          Worrek
-        </Link>
-        <div className="flex min-w-0 flex-wrap items-center justify-end gap-2">
+      <header className={styles.topBar}>
+        <div className={`${styles.identityGroup} ${isRenaming ? styles.identityRenaming : ""}`}>
+          <Link href="/documents" className={styles.brandLink} aria-label="Worrek documents">
+            <span className={styles.brandMark} aria-hidden="true">
+              <svg viewBox="0 0 36 36" fill="none"><path d="M4 9.5 10 27l8-13 8 13 6-17.5" stroke="currentColor" strokeWidth="5.3" strokeLinecap="round" strokeLinejoin="round" /><path d="m14 9 4 5.5L22 9" stroke="currentColor" strokeWidth="4.3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </span>
+            <span className={styles.brandName}>Worrek</span>
+          </Link>
+          <span className={styles.breadcrumbArrow} aria-hidden="true">›</span>
           {isRenaming ? (
-            <form onSubmit={onSaveName} className="flex min-w-0 items-center gap-1.5">
+            <form onSubmit={onSaveName} className={styles.renameForm}>
               <input
                 autoFocus
                 aria-label="Document name"
@@ -250,46 +266,40 @@ export function Editor({
                   }
                 }}
                 disabled={isSavingName}
-                className="w-40 min-w-0 rounded-md border border-[#d9dde4] px-2 py-1 text-[12px] text-foreground outline-none focus:border-brand"
+                className={styles.renameInput}
               />
-              <button type="submit" disabled={isSavingName} className="cursor-pointer rounded-md bg-brand px-2.5 py-1.5 text-[12px] font-[650] text-white disabled:opacity-65">
+              <button type="submit" disabled={isSavingName} className={styles.renameConfirm}>
                 {isSavingName ? "Saving…" : "Save name"}
               </button>
-              <button type="button" disabled={isSavingName} onClick={() => { setIsRenaming(false); setRenameError(""); }} className="cursor-pointer rounded-md border border-[#d9dde4] px-2.5 py-1.5 text-[12px] font-[650] text-foreground disabled:opacity-65">
+              <button type="button" disabled={isSavingName} onClick={() => { setIsRenaming(false); setRenameError(""); }} className={styles.renameCancel}>
                 Cancel
               </button>
             </form>
           ) : (
-            <>
-              <span className="max-w-48 truncate text-[12px] text-muted max-[650px]:max-w-28">
-                {currentDocumentTitle || fileName}
-              </span>
-              {!isBlank && !isLoadingDocument ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setDraftTitle(currentDocumentTitle || fileName.replace(/\.docx$/i, ""));
-                    setRenameError("");
-                    setIsRenaming(true);
-                  }}
-                  disabled={isSaving}
-                  className="shrink-0 cursor-pointer rounded-md border border-[#d9dde4] bg-white px-2.5 py-1.5 text-[12px] font-[650] text-foreground hover:border-[#b8cbed] disabled:opacity-65"
-                >
-                  Rename
-                </button>
-              ) : null}
-            </>
-          )}
-          {renameError ? <span role="alert" className="max-w-48 text-[11px] text-[#9b4141]">{renameError}</span> : null}
-          {saveStatus === "error" && saveError ? (
-            <span
-              className="max-w-48 truncate text-[11px] text-[#9b4141] max-[650px]:max-w-28"
-              role="alert"
-              title={saveError}
+            <button
+              type="button"
+              onClick={beginRename}
+              disabled={isBlank || isLoadingDocument || isSaving}
+              className={styles.documentTitle}
+              title="Rename document"
+              aria-label={`Rename ${currentDocumentTitle || fileName}`}
             >
-              {saveError}
-            </span>
-          ) : null}
+              <span>{currentDocumentTitle || fileName.replace(/\.docx$/i, "")}</span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
+          )}
+          <span className={`${styles.saveStatus} ${saveStatus === "error" || renameError ? styles.saveStatusError : ""}`} role={saveStatus === "error" || renameError ? "alert" : "status"} title={renameError || saveError || statusLabel}>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <span>{renameError || (saveStatus === "error" ? saveError : statusLabel)}</span>
+          </span>
+        </div>
+
+        <nav className={styles.workspaceTabs} aria-label="Workspace">
+          <span aria-current="page" className={styles.activeTab}>Document</span>
+          <Link href="/documents" className={styles.inactiveTab}>Files</Link>
+        </nav>
+
+        <div className={styles.topActions}>
           <input
             ref={fileInputRef}
             type="file"
@@ -300,26 +310,40 @@ export function Editor({
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="shrink-0 cursor-pointer rounded-md border border-[#d9dde4] bg-white px-2.5 py-1.5 text-[12px] font-[650] text-foreground hover:border-[#b8cbed]"
+            className={`${styles.iconAction} ${styles.desktopAction}`}
+            title="Open .docx"
+            aria-label="Open .docx"
           >
-            Open .docx
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 16V5.5A1.5 1.5 0 0 1 4.5 4H8l1.5 2H15a1.5 1.5 0 0 1 1.5 1.5V16H3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M3 9h13.5" stroke="currentColor" strokeWidth="1.5" /></svg>
           </button>
           <button
             type="button"
             onClick={() => void onSaveDocx()}
-            className="shrink-0 cursor-pointer rounded-md border border-[#d9dde4] bg-white px-2.5 py-1.5 text-[12px] font-[650] text-foreground hover:border-[#b8cbed]"
+            className={`${styles.iconAction} ${styles.desktopAction}`}
+            title="Download .docx"
+            aria-label="Download .docx"
           >
-            Save .docx
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v9m0 0 3-3m-3 3L7 9M4 14v2h12v-2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
           <button
             type="button"
             onClick={() => void onSaveToWorrek()}
             disabled={isBlank || isLoadingDocument || !isEditorReady || isSaving || isRenaming}
-            className="shrink-0 cursor-pointer rounded-md border border-brand bg-brand px-2.5 py-1.5 text-[12px] font-[650] text-white hover:border-brand-hover hover:bg-brand-hover disabled:cursor-not-allowed disabled:opacity-65"
+            className={styles.primaryAction}
           >
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 15.5V4.5h10l2 2v9H4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M7 4.5v4h6v-4M7 15.5v-5h6v5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>
             {saveLabel}
           </button>
-          <LogoutButton />
+          <details ref={moreMenuRef} className={styles.moreMenu}>
+            <summary className={styles.iconAction} aria-label="More document actions" title="More document actions">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="4" cy="10" r="1.3" /><circle cx="10" cy="10" r="1.3" /><circle cx="16" cy="10" r="1.3" /></svg>
+            </summary>
+            <div className={styles.morePanel}>
+              <button type="button" className={styles.mobileMenuAction} onClick={() => { if (moreMenuRef.current) moreMenuRef.current.open = false; fileInputRef.current?.click(); }}>Open .docx</button>
+              <button type="button" className={styles.mobileMenuAction} onClick={() => { if (moreMenuRef.current) moreMenuRef.current.open = false; void onSaveDocx(); }}>Download .docx</button>
+              <div className={styles.logoutItem}><LogoutButton /></div>
+            </div>
+          </details>
         </div>
       </header>
 
@@ -341,7 +365,7 @@ export function Editor({
           }}
         >
           <DocxEditor.Menu
-            className={`${styles.menuBar} flex shrink-0 items-center gap-0.5 border-b border-[#eef0f4] bg-white px-2.5 font-sans text-[11px] h-[37px] print:hidden`}
+            className={`${styles.menuBar} flex h-8 shrink-0 items-center border-b border-[#e7eaf0] bg-white px-4 font-sans text-[12px] print:hidden`}
             fileName={currentDocumentTitle || fileName.replace(/\.docx$/i, "")}
             onOpen={() => fileInputRef.current?.click()}
             onSave={() => void onSaveDocx()}
@@ -349,12 +373,13 @@ export function Editor({
 
           <DocxEditor.Toolbar
             preset={false}
-            overflow={false}
-            className={`${styles.ribbon} border-b border-[#e3e6eb] px-2.5 py-1.5 gap-0.5 print:hidden`}
+            overflow
+            className={`${styles.ribbon} h-10 border-b border-[#e7eaf0] px-3 py-1 gap-0.5 print:hidden`}
           >
             <DocxEditor.Toolbar.Undo />
             <DocxEditor.Toolbar.Redo />
             <DocxEditor.Toolbar.Separator />
+            <DocxEditor.Toolbar.StylePicker />
             <DocxEditor.Toolbar.FontFamily />
             <DocxEditor.Toolbar.FontSize />
             <DocxEditor.Toolbar.Separator />
@@ -365,7 +390,6 @@ export function Editor({
             <DocxEditor.Toolbar.FontColor />
             <DocxEditor.Toolbar.Highlight />
             <DocxEditor.Toolbar.Separator />
-            <DocxEditor.Toolbar.StylePicker />
             <DocxEditor.Toolbar.Alignment />
             <DocxEditor.Toolbar.BulletList />
             <DocxEditor.Toolbar.NumberedList />
@@ -382,7 +406,7 @@ export function Editor({
           </DocxEditor.Toolbar>
 
           <div
-            className={`${styles.workspace} relative grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_324px] grid-rows-[minmax(0,1fr)] bg-[#f7f8fa] max-[950px]:grid-cols-[minmax(0,1fr)_242px] max-[650px]:grid-cols-1 max-[650px]:grid-rows-[auto_auto] max-[650px]:overflow-y-auto`}
+            className={`${styles.workspace} relative grid min-h-0 flex-1 grid-cols-[minmax(0,1fr)_420px] grid-rows-[minmax(0,1fr)] bg-[#f7f8fa] max-[1200px]:grid-cols-[minmax(0,1fr)_360px] max-[950px]:grid-cols-[minmax(0,1fr)_300px] max-[650px]:grid-cols-1 max-[650px]:grid-rows-[auto_auto] max-[650px]:overflow-y-auto`}
           >
             <section
               className={`${styles.documentStage} flex min-h-0 min-w-0 flex-col overflow-hidden max-[650px]:h-[60dvh]`}
@@ -423,27 +447,18 @@ export function Editor({
             <aside
               className={`${styles.aiPanel} flex min-h-0 min-w-0 flex-col border-l border-[#e3e6eb] bg-white max-[650px]:border-l-0 max-[650px]:border-t`}
             >
-              <div className="flex h-[47px] shrink-0 items-center justify-between border-b border-[#eef0f4] px-[17px] text-[11px] font-semibold text-[#454f60]">
-                <span>Worrek AI Agent</span>
-                {!isBlank ? (
-                  <span className="max-w-44 truncate text-[10px] font-medium text-[#98a1af]">
-                    {currentDocumentTitle || fileName}
-                  </span>
-                ) : (
-                  <span className="flex items-center gap-1.5 text-[15px] font-normal text-[#a1a8b4]" aria-hidden="true">
-                    ＋ <span>···</span>
-                  </span>
-                )}
+              <div className={styles.inspectorHeader}>
+                <strong>AI Assistant</strong>
               </div>
               {isBlank && (isLoadingDocument || loadError) ? (
-                <div className="m-auto px-6 text-center text-[13px] text-muted" role={loadError ? "alert" : "status"}>
+                <div className={styles.inspectorMessage} role={loadError ? "alert" : "status"}>
                   {loadError || "Opening document…"}
                   {loadError ? <p className="mt-3"><Link href="/documents" className="text-brand underline">Back to documents</Link></p> : null}
                 </div>
               ) : isBlank ? (
                 <button
                   type="button"
-                  className="m-auto flex w-[min(240px,calc(100%-48px))] cursor-pointer flex-col items-center justify-center gap-2 rounded-[14px] border-2 border-dashed border-[#ccd4e0] bg-[#fafbfd] px-5 py-[26px] text-center transition-colors hover:border-[#a8bce6] hover:bg-[#f4f8ff] max-[650px]:my-4"
+                  className={styles.openDocumentCard}
                   onClick={() => fileInputRef.current?.click()}
                   onMouseDown={(e) => e.preventDefault()}
                   onDragOver={(e) => e.preventDefault()}
@@ -453,45 +468,45 @@ export function Editor({
                     if (file) void onFileSelect(file);
                   }}
                 >
-                  <span
-                    className="flex h-12 w-12 items-center justify-center rounded-full bg-[#eaf1ff] text-[26px] font-light leading-none text-brand"
-                    aria-hidden="true"
-                  >
-                    ＋
+                  <span className={styles.openDocumentIcon} aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v10H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /><path d="M4 10h16" stroke="currentColor" strokeWidth="1.6" /></svg>
                   </span>
-                  <span className="text-[14px] font-[650] text-[#454f60]">
-                    Open a Word document
-                  </span>
-                  <span className="max-w-60 text-[11px] leading-relaxed text-[#98a1af]">
-                    Drop a .docx here or browse to start editing with AI
+                  <strong>Open a Word document</strong>
+                  <span>
+                    Drop a .docx here or browse to start editing.
                   </span>
                 </button>
               ) : (
                 <>
-                  <div className="min-h-0 flex-1 overflow-y-auto px-5 py-6 max-[650px]:px-[18px] max-[650px]:py-[17px]">
-                    <div className="rounded-[10px] border border-[#e4e8ee] bg-[#f7f8fa] px-3.5 py-3 text-[12px] leading-relaxed text-[#79818f]">
-                      Ask me anything about this document — edits, rewrites, or
-                      summaries.
+                  <div className={styles.inspectorBody}>
+                    <div className={styles.suggestionCard}>
+                      <span className={styles.suggestionBadge}>WRITING WORKSPACE</span>
+                      <h3>No revisions yet</h3>
+                      <p>Write and format your document as usual. Suggested changes will appear here when they’re available.</p>
+                      <div className={styles.suggestionPreview}>
+                        Your document stays in place while you work.
+                      </div>
                     </div>
                   </div>
-                  <div className="mx-3 mt-auto mb-0 shrink-0 rounded-[12px] border border-[#dde3ed] bg-white p-2.5">
-                    <div className="flex items-end gap-2">
+                  <div className={styles.composerDock}>
+                    <div className={styles.composerBox}>
+                      <div className={styles.composerScope}>
+                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5.5h10M5 9h10M5 12.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4 3.5h12v13H4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>
+                        <span>Current document</span>
+                      </div>
                       <input
-                        className="min-w-0 flex-1 border-0 bg-transparent p-2 font-sans text-[13px] leading-snug text-[#454f60] outline-none placeholder:text-[#a3aab5]"
-                        placeholder="What can I help you with this document?"
+                        className={styles.composerInput}
+                        placeholder="Describe a revision or ask a question…"
                         aria-label="Ask Worrek AI about this document"
                       />
-                      <button
-                        type="button"
-                        className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 bg-brand text-[15px] text-white hover:bg-brand-hover"
-                        aria-label="Send"
-                      >
-                        ↑
-                      </button>
+                      <div className={styles.composerFooter}>
+                        <span>Worrek AI</span>
+                        <button type="button" className={styles.sendButton} aria-label="Send">
+                          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m0 0-5-5m5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="shrink-0 px-[17px] pb-3 pt-2 text-center text-[8px] text-[#a3aab5]">
-                    You’re in control of every edit.
+                    <p className={styles.composerNote}>You’re in control of every edit.</p>
                   </div>
                 </>
               )}
