@@ -80,6 +80,11 @@ export const document = pgTable(
       .defaultNow()
       .$onUpdate(() => new Date())
       .notNull(),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },
-  (table) => [index("document_user_id_idx").on(table.userId)],
+  (table) => [
+    index("document_user_id_idx").on(table.userId),
+    index("document_user_active_idx").on(table.userId, table.updatedAt).where(sql`${table.deletedAt} IS NULL`),
+    index("document_user_trash_idx").on(table.userId, table.deletedAt).where(sql`${table.deletedAt} IS NOT NULL`),
+  ],
 );

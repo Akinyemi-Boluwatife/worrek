@@ -3,7 +3,7 @@
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 
-import { openDocument, type OpenDocumentResult } from "@/_lib/documents";
+import { openDocument, type OpenDocumentResult } from "@/_lib/document-client";
 
 const Editor = dynamic(
   () => import("./editor").then((module) => module.Editor),

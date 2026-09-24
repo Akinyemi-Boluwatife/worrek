@@ -14,7 +14,7 @@ import en from "@docx-editor.dev/i18n/en";
 import "@docx-editor.dev/core/styles/editor.css";
 import { LogoutButton } from "@/_components/auth/logout-button";
 import { renameDocument } from "@/_lib/document-actions";
-import { openDocument, saveDocument, uploadDocument, type OpenDocumentResult } from "@/_lib/documents";
+import { openDocument, saveDocument, uploadDocument, type OpenDocumentResult } from "@/_lib/document-client";
 import { useEditorStore } from "@/_stores/editor.store";
 import styles from "./editor.module.css";
 

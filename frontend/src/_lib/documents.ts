@@ -1,193 +1,47 @@
-export type DocumentMetadata = {
-  id: string;
-  userId: string;
-  title: string;
-  fileName: string;
-  storageKey: string;
-  size: number | null;
-  createdAt: string;
-  updatedAt: string;
-};
+import "server-only";
 
-export type DocumentListItem = Pick<
-  DocumentMetadata,
-  "id" | "title" | "fileName" | "updatedAt" | "size"
->;
+import { cookies } from "next/headers";
 
-export type UploadDocumentResult =
-  | { success: true; document: DocumentMetadata }
-  | { success: false; message: string };
+import { api } from "./apiConstants";
+import type { DocumentListItem } from "./document-client";
 
-export type OpenDocumentResult =
-  | {
-      success: true;
-      document: Pick<DocumentMetadata, "id" | "title" | "fileName">;
-      content: ArrayBuffer;
-    }
-  | { success: false; message: string };
-
-export async function openDocument(id: string): Promise<OpenDocumentResult> {
-  performance.clearMarks("document-open:start");
-  performance.clearMarks("document-open:headers");
-  performance.clearMarks("document-open:body");
-  performance.clearMarks("document-open:ready");
-  performance.mark("document-open:start");
-
+export async function loadDocuments(view: "active" | "trash" = "active"): Promise<{
+  documents: DocumentListItem[];
+  error: string;
+}> {
   try {
-    const response = await fetch(
-      `/api/documents/${encodeURIComponent(id)}/content`,
-      { cache: "no-store" },
-    );
-    performance.mark("document-open:headers");
-    performance.measure("document-open:request", "document-open:start", "document-open:headers");
+    const requestStart = performance.now();
+    const response = await api.listDocuments((await cookies()).toString(), view);
+    const headersAt = performance.now();
+    const payload = await response.text();
+    const bodyAt = performance.now();
 
-    if (response.status === 404) {
-      return { success: false, message: "This document could not be found." };
+    if (process.env.DOCUMENT_PERF === "1") {
+      console.info("Document list request", {
+        status: response.status,
+        upstreamMs: Math.round(headersAt - requestStart),
+        bodyMs: Math.round(bodyAt - headersAt),
+        payloadBytes: Buffer.byteLength(payload, "utf8"),
+        serverTiming: response.headers.get("server-timing"),
+      });
     }
+
     if (!response.ok) {
       return {
-        success: false,
-        message: "We couldn't open this document right now.",
+        documents: [],
+        error: "We couldn't load your documents right now.",
       };
     }
 
-    const encodedTitle = response.headers.get("X-Document-Title");
-    const encodedFileName = response.headers.get("X-Document-File-Name");
-    if (!encodedTitle || !encodedFileName) {
-      return {
-        success: false,
-        message: "We couldn't open this document right now.",
-      };
-    }
+    const body = JSON.parse(payload) as { data?: DocumentListItem[] };
+    if (!Array.isArray(body.data))
+      throw new Error("Invalid documents response");
 
-    const content = await response.arrayBuffer();
-    performance.mark("document-open:body");
-    performance.measure("document-open:transfer", {
-      start: "document-open:headers",
-      end: "document-open:body",
-      detail: {
-        bytes: content.byteLength,
-        serverTiming: response.headers.get("server-timing"),
-      },
-    });
-
-    return {
-      success: true,
-      document: {
-        id,
-        title: decodeURIComponent(encodedTitle),
-        fileName: decodeURIComponent(encodedFileName),
-      },
-      content,
-    };
+    return { documents: body.data, error: "" };
   } catch {
     return {
-      success: false,
-      message: "We couldn't open this document right now.",
+      documents: [],
+      error: "We couldn't load your documents right now.",
     };
   }
-}
-
-export async function saveDocument(
-  id: string,
-  content: ArrayBuffer,
-): Promise<UploadDocumentResult> {
-  try {
-    const response = await fetch(
-      `/api/documents/${encodeURIComponent(id)}/content`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type":
-            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        },
-        body: content,
-      },
-    );
-
-    if (response.ok) {
-      const body = (await response.json()) as { data: DocumentMetadata };
-      return { success: true, document: body.data };
-    }
-
-    const body = (await response.json().catch(() => null)) as {
-      message?: string;
-    } | null;
-    return {
-      success: false,
-      message: body?.message ?? "We couldn't save this document right now.",
-    };
-  } catch {
-    return {
-      success: false,
-      message: "We couldn't save this document right now.",
-    };
-  }
-}
-
-export async function uploadDocument(
-  formData: FormData,
-): Promise<UploadDocumentResult> {
-  try {
-    const response = await fetch("/api/documents", {
-      method: "POST",
-      body: formData,
-    });
-
-    if (response.ok) {
-      const body = (await response.json()) as { data: DocumentMetadata };
-
-      return { success: true, document: body.data };
-    }
-
-    if (response.status === 401) {
-      return {
-        success: false,
-        message: "Please sign in to upload documents.",
-      };
-    }
-
-    if (response.status === 413) {
-      return {
-        success: false,
-        message: "This file is larger than the 10 MiB limit.",
-      };
-    }
-
-    if (response.status === 400) {
-      const body = (await response.json().catch(() => null)) as {
-        message?: string;
-      } | null;
-
-      return {
-        success: false,
-        message: body?.message ?? "That file couldn't be uploaded.",
-      };
-    }
-
-    if (response.status >= 500) {
-      const body = (await response.json().catch(() => null)) as {
-        message?: string;
-      } | null;
-
-      return {
-        success: false,
-        message:
-          body?.message ??
-          "We couldn't upload this document right now. Please try again.",
-      };
-    }
-
-    console.error(`Document upload returned ${response.status}.`);
-  } catch (error) {
-    console.error(
-      "Document upload failed:",
-      error instanceof Error ? error.message : "Unknown error",
-    );
-  }
-
-  return {
-    success: false,
-    message: "We couldn't upload this document right now. Please try again.",
-  };
 }

@@ -1,4 +1,4 @@
-import { and, desc, eq } from "drizzle-orm";
+import { and, desc, eq, isNotNull, isNull } from "drizzle-orm";
 import { Hono } from "hono";
 import { bodyLimit } from "hono/body-limit";
 
@@ -44,6 +44,7 @@ function resolveTitle(requested: string | undefined, fileName: string): string {
 
 documentRoute.get("/", requireAuth, async (c) => {
   const user = c.get("user");
+  const trash = c.req.query("view") === "trash";
 
   try {
     const db = c.get("db");
@@ -56,10 +57,11 @@ documentRoute.get("/", requireAuth, async (c) => {
         fileName: document.fileName,
         updatedAt: document.updatedAt,
         size: document.size,
+        deletedAt: document.deletedAt,
       })
       .from(document)
-      .where(eq(document.userId, user.id))
-      .orderBy(desc(document.updatedAt));
+      .where(and(eq(document.userId, user.id), trash ? isNotNull(document.deletedAt) : isNull(document.deletedAt)))
+      .orderBy(trash ? desc(document.deletedAt) : desc(document.updatedAt));
     c.get("timings").push({ name: "query", duration: performance.now() - queryStart });
 
     return c.json({ data: documents });
@@ -82,7 +84,7 @@ documentRoute.get("/:id", requireAuth, async (c) => {
   try {
     const db = c.get("db");
     const [saved] = await db.select().from(document).where(
-      and(eq(document.id, id), eq(document.userId, c.get("user").id)),
+      and(eq(document.id, id), eq(document.userId, c.get("user").id), isNull(document.deletedAt)),
     ).limit(1);
 
     return saved
@@ -123,6 +125,7 @@ documentRoute.patch(
       }).where(and(
         eq(document.id, id),
         eq(document.userId, c.get("user").id),
+        isNull(document.deletedAt),
       )).returning();
 
       return updated
@@ -143,7 +146,7 @@ documentRoute.get("/:id/content", requireAuth, async (c) => {
     const db = c.get("db");
     const queryStart = performance.now();
     const [saved] = await db.select().from(document).where(
-      and(eq(document.id, id), eq(document.userId, c.get("user").id)),
+      and(eq(document.id, id), eq(document.userId, c.get("user").id), isNull(document.deletedAt)),
     ).limit(1);
     c.get("timings").push({ name: "query", duration: performance.now() - queryStart });
     if (!saved) return c.json({ message: "Document not found." }, 404);
@@ -181,7 +184,7 @@ documentRoute.put(
     try {
       const db = c.get("db");
       const [saved] = await db.select().from(document).where(
-        and(eq(document.id, id), eq(document.userId, c.get("user").id)),
+        and(eq(document.id, id), eq(document.userId, c.get("user").id), isNull(document.deletedAt)),
       ).limit(1);
       if (!saved) return c.json({ message: "Document not found." }, 404);
 
@@ -208,6 +211,7 @@ documentRoute.put(
           eq(document.id, id),
           eq(document.userId, c.get("user").id),
           eq(document.storageKey, oldStorageKey),
+          isNull(document.deletedAt),
         )).returning();
 
         if (!updated) {
@@ -229,6 +233,62 @@ documentRoute.put(
     }
   },
 );
+
+documentRoute.post("/:id/trash", requireAuth, async (c) => {
+  const id = c.req.param("id");
+  if (!UUID_PATTERN.test(id)) return c.json({ message: "Document not found." }, 404);
+
+  try {
+    const [updated] = await c.get("db").update(document)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(document.id, id), eq(document.userId, c.get("user").id), isNull(document.deletedAt)))
+      .returning({ id: document.id });
+    return updated ? c.json({ data: updated }) : c.json({ message: "Document not found." }, 404);
+  } catch (error) {
+    console.error("POST /api/documents/:id/trash failed", error);
+    return c.json({ message: "Failed to move document to Trash." }, 500);
+  }
+});
+
+documentRoute.post("/:id/restore", requireAuth, async (c) => {
+  const id = c.req.param("id");
+  if (!UUID_PATTERN.test(id)) return c.json({ message: "Document not found." }, 404);
+
+  try {
+    const [updated] = await c.get("db").update(document)
+      .set({ deletedAt: null })
+      .where(and(eq(document.id, id), eq(document.userId, c.get("user").id), isNotNull(document.deletedAt)))
+      .returning({ id: document.id });
+    return updated ? c.json({ data: updated }) : c.json({ message: "Document not found." }, 404);
+  } catch (error) {
+    console.error("POST /api/documents/:id/restore failed", error);
+    return c.json({ message: "Failed to restore document." }, 500);
+  }
+});
+
+documentRoute.delete("/:id", requireAuth, async (c) => {
+  const id = c.req.param("id");
+  if (!UUID_PATTERN.test(id)) return c.json({ message: "Document not found." }, 404);
+
+  try {
+    const db = c.get("db");
+    const [saved] = await db.select({ storageKey: document.storageKey }).from(document)
+      .where(and(eq(document.id, id), eq(document.userId, c.get("user").id), isNotNull(document.deletedAt))).limit(1);
+    if (!saved) return c.json({ message: "Document not found." }, 404);
+
+    // Remove the record first so a storage failure cannot leave an openable document without a file.
+    const [removed] = await db.delete(document)
+      .where(and(eq(document.id, id), eq(document.userId, c.get("user").id), isNotNull(document.deletedAt), eq(document.storageKey, saved.storageKey)))
+      .returning({ id: document.id });
+    if (!removed) return c.json({ message: "Document not found." }, 404);
+
+    await c.env.DOCUMENTS_BUCKET.delete(saved.storageKey);
+    return c.json({ data: removed });
+  } catch (error) {
+    console.error("DELETE /api/documents/:id failed", error);
+    return c.json({ message: "Failed to delete document forever." }, 500);
+  }
+});
 
 documentRoute.post(
   "/",

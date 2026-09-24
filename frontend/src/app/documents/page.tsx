@@ -14,22 +14,20 @@ export const metadata: Metadata = {
 
 export default function DocumentsPage() {
   return (
-    <>
-      <header className="page-wrap flex h-28 items-center justify-between max-[651px]:h-[86px]">
+    <div className="flex min-h-screen flex-col bg-[#fafbfc]">
+      <header className="sticky top-0 z-40 border-b border-[#e2e8f0] bg-white/80 backdrop-blur-md"><div className="mx-auto flex h-20 w-full max-w-6xl items-center justify-between px-6 max-[651px]:h-[70px]">
         <Brand />
         <LogoutButton />
-      </header>
+      </div></header>
 
-      <main className="page-wrap flex-1 pb-20 pt-10 max-[651px]:pt-5">
+      <main className="mx-auto w-full max-w-6xl flex-1 px-6 pb-20 pt-14 max-[651px]:pt-10">
         <div className="flex flex-wrap items-end justify-between gap-x-8 gap-y-6">
           <div>
-            <p className="text-[11px] font-[650] tracking-[0.12em] text-brand uppercase">
-              Your workspace
-            </p>
-            <h1 className="mt-3 text-[clamp(34px,4vw,52px)] leading-[1.12] font-[650] tracking-[-2px]">
+            <p className="text-xs font-semibold tracking-widest text-brand uppercase">Your workspace</p>
+            <h1 className="mt-3 text-[clamp(36px,4vw,48px)] leading-[1.1] font-extrabold tracking-tight text-[#0f172a]">
               My documents
             </h1>
-            <p className="mt-4 text-[14px] leading-[1.8] text-muted">
+            <p className="mt-2 text-base text-[#64748b]">
               Your writing, all in one place.
             </p>
           </div>
@@ -40,6 +38,6 @@ export default function DocumentsPage() {
           <SavedDocumentsSection />
         </Suspense>
       </main>
-    </>
+    </div>
   );
 }

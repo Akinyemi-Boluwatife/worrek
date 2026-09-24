@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Worrek - My documents</title>
+<!-- Tailwind CSS CDN with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration for Brand Palette & Typography -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eff5ff',
+              100: '#dbe8fe',
+              500: '#4274dc',
+              600: '#3461c7',
+              700: '#274eb0',
+            },
+            surface: {
+              canvas: '#fbfbfd',
+              card: '#ffffff',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Custom Style Tag for Global Tweaks -->
+<style data-purpose="base-styling">
+    body {
+      background-color: #fafbfc;
+      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: #e2e8f0;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col font-sans">
+<!-- BEGIN: MainHeader -->
+<header class="w-full bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-40 transition-shadow">
+<div class="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+<!-- Brand Logo & Name -->
+<a class="flex items-center gap-3 group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 rounded-lg p-1" data-purpose="brand-logo" href="#">
+<svg aria-hidden="true" class="w-8 h-8 transition-transform group-hover:scale-105" fill="none" viewbox="0 0 36 36">
+<path d="M4 9.5 10 27l8-13 8 13 6-17.5" stroke="#4274dc" stroke-linecap="round" stroke-linejoin="round" stroke-width="5.3"></path>
+<path d="m14 9 4 5.5L22 9" stroke="#4274dc" stroke-linecap="round" stroke-linejoin="round" stroke-width="4.3"></path>
+</svg>
+<span class="text-2xl font-bold tracking-tight text-slate-900 group-hover:text-slate-800">Worrek</span>
+</a>
+<!-- Right Navigation Actions -->
+<div class="flex items-center gap-3">
+<!-- Log out button -->
+<button class="text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 shadow-sm rounded-lg px-4 py-2 transition-all hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-300" data-purpose="logout-button" type="button">
+          Log out
+        </button>
+</div>
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: MainContent -->
+<main class="flex-1 max-w-6xl w-full mx-auto px-6 py-10 sm:py-14" data-purpose="workspace-container">
+<!-- BEGIN: WorkspaceHeaderSection -->
+<section aria-labelledby="workspace-title" class="mb-10 sm:mb-12">
+<!-- Eyebrow label -->
+<p class="text-xs font-semibold tracking-widest uppercase text-brand-500 mb-3" data-purpose="eyebrow-tag">
+        YOUR WORKSPACE
+      </p>
+<!-- Main Page Title & Top Action Controls -->
+<div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6">
+<div>
+<h1 class="text-4xl sm:text-5xl font-extrabold tracking-tight text-slate-900" id="workspace-title">
+            My documents
+          </h1>
+<p class="mt-2 text-base text-slate-500 font-normal">
+            Your writing, all in one place.
+          </p>
+</div>
+<!-- Primary and Secondary Document Actions -->
+<div class="flex items-center gap-3 flex-wrap">
+<!-- Import file button -->
+<button class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-1" data-purpose="import-document-btn" type="button">
+<svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            Import file document
+          </button>
+<!-- New document button -->
+<button class="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand-500 hover:bg-brand-600 active:bg-brand-700 text-white text-sm font-medium rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-brand-500 focus:ring-offset-2" data-purpose="new-document-btn" type="button">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+            New document
+          </button>
+</div>
+</div>
+</section>
+<!-- END: WorkspaceHeaderSection -->
+<!-- BEGIN: DocumentLibrarySection -->
+<section aria-labelledby="saved-documents-heading" data-purpose="documents-list-section">
+<!-- Section Header & Filter Utilities -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 gap-4">
+<div class="flex items-baseline gap-3">
+<h2 class="text-xl font-bold tracking-tight text-slate-900" id="saved-documents-heading">
+            Saved documents
+          </h2>
+<span class="text-sm font-medium text-slate-400" id="document-counter">4 documents</span>
+</div>
+<!-- Quick Search and Filter Controls -->
+<div class="flex items-center gap-2 w-full sm:w-auto">
+<!-- Search input box -->
+<div class="relative flex-1 sm:w-64">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<svg class="h-4 w-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<input aria-label="Search documents" class="w-full text-xs sm:text-sm pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-slate-700 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-1 focus:ring-brand-500 transition-colors shadow-sm" placeholder="Search documents..." type="text"/>
+</div>
+<!-- Sort dropdown filter -->
+<button class="flex items-center gap-1.5 px-3 py-2 text-xs sm:text-sm font-medium text-slate-600 bg-white border border-slate-200 rounded-lg shadow-sm hover:bg-slate-50 transition-colors focus:outline-none focus:ring-1 focus:ring-brand-500" title="Sort documents" type="button">
+<svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="hidden sm:inline">Recent</span>
+</button>
+</div>
+</div>
+<!-- Document Cards Container -->
+<div class="bg-white border border-slate-200/90 rounded-2xl shadow-sm divide-y divide-slate-100 overflow-hidden" data-purpose="document-table-card">
+<!-- Document Item 1: isitfaster -->
+<article class="group p-4 sm:p-5 flex items-center justify-between hover:bg-slate-50/70 transition-colors cursor-pointer" data-purpose="document-item">
+<div class="flex items-center gap-4 min-w-0 pr-4">
+<!-- Icon badge -->
+<div class="w-12 h-12 shrink-0 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center justify-center text-brand-500 group-hover:scale-105 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<!-- Filename and details -->
+<div class="min-w-0">
+<h3 class="text-base font-semibold text-slate-800 group-hover:text-brand-500 transition-colors truncate">
+                isitfaster
+              </h3>
+<p class="text-xs sm:text-sm text-slate-500 truncate mt-0.5">
+                Untitled document.docx
+              </p>
+</div>
+</div>
+<!-- Metadata & Actions -->
+<div class="flex items-center gap-4 sm:gap-6 shrink-0 text-right">
+<div class="text-right">
+<time class="block text-xs sm:text-sm font-medium text-slate-500" datetime="2026-09-24">Sep 24, 2026</time>
+<span class="block text-xs text-slate-400 mt-0.5">2 KB</span>
+</div>
+<!-- Quick options button -->
+<button aria-label="Options for isitfaster" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</article>
+<!-- Document Item 2: Bolu_Resume -->
+<article class="group p-4 sm:p-5 flex items-center justify-between hover:bg-slate-50/70 transition-colors cursor-pointer" data-purpose="document-item">
+<div class="flex items-center gap-4 min-w-0 pr-4">
+<!-- Icon badge -->
+<div class="w-12 h-12 shrink-0 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center justify-center text-brand-500 group-hover:scale-105 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<!-- Filename and details -->
+<div class="min-w-0">
+<h3 class="text-base font-semibold text-slate-800 group-hover:text-brand-500 transition-colors truncate">
+                Bolu_Resume
+              </h3>
+<p class="text-xs sm:text-sm text-slate-500 truncate mt-0.5">
+                Bolu_Resume.docx
+              </p>
+</div>
+</div>
+<!-- Metadata & Actions -->
+<div class="flex items-center gap-4 sm:gap-6 shrink-0 text-right">
+<div class="text-right">
+<time class="block text-xs sm:text-sm font-medium text-slate-500" datetime="2026-09-23">Sep 23, 2026</time>
+<span class="block text-xs text-slate-400 mt-0.5">14 KB</span>
+</div>
+<!-- Quick options button -->
+<button aria-label="Options for Bolu Resume" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</article>
+<!-- Document Item 3: Untitled document -->
+<article class="group p-4 sm:p-5 flex items-center justify-between hover:bg-slate-50/70 transition-colors cursor-pointer" data-purpose="document-item">
+<div class="flex items-center gap-4 min-w-0 pr-4">
+<!-- Icon badge -->
+<div class="w-12 h-12 shrink-0 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center justify-center text-brand-500 group-hover:scale-105 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<!-- Filename and details -->
+<div class="min-w-0">
+<h3 class="text-base font-semibold text-slate-800 group-hover:text-brand-500 transition-colors truncate">
+                Untitled document
+              </h3>
+<p class="text-xs sm:text-sm text-slate-500 truncate mt-0.5">
+                Untitled document.docx
+              </p>
+</div>
+</div>
+<!-- Metadata & Actions -->
+<div class="flex items-center gap-4 sm:gap-6 shrink-0 text-right">
+<div class="text-right">
+<time class="block text-xs sm:text-sm font-medium text-slate-500" datetime="2026-09-23">Sep 23, 2026</time>
+<span class="block text-xs text-slate-400 mt-0.5">2 KB</span>
+</div>
+<!-- Quick options button -->
+<button aria-label="Options for Untitled document" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</article>
+<!-- Document Item 4: Long Hash Document -->
+<article class="group p-4 sm:p-5 flex items-center justify-between hover:bg-slate-50/70 transition-colors cursor-pointer" data-purpose="document-item">
+<div class="flex items-center gap-4 min-w-0 pr-4">
+<!-- Icon badge -->
+<div class="w-12 h-12 shrink-0 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center justify-center text-brand-500 group-hover:scale-105 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"></path>
+</svg>
+</div>
+<!-- Filename and details with truncation for long strings -->
+<div class="min-w-0">
+<h3 class="text-base font-semibold text-slate-800 group-hover:text-brand-500 transition-colors truncate">
+                documents_zk4KDjv7KbG7pe4nkIM34Fdz1YzaRxDF_25a04119-f00e-468f-9cfe-2b068c9d79b2
+              </h3>
+<p class="text-xs sm:text-sm text-slate-500 truncate mt-0.5">
+                documents_zk4KDjv7KbG7pe4nkIM34Fdz1YzaRxDF_25a04119-f00e-468f-9cfe-2b068c9d79b2.docx
+              </p>
+</div>
+</div>
+<!-- Metadata & Actions -->
+<div class="flex items-center gap-4 sm:gap-6 shrink-0 text-right">
+<div class="text-right">
+<time class="block text-xs sm:text-sm font-medium text-slate-500" datetime="2026-09-23">Sep 23, 2026</time>
+<span class="block text-xs text-slate-400 mt-0.5">20 B</span>
+</div>
+<!-- Quick options button -->
+<button aria-label="Options for document" class="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+</div>
+</article>
+</div>
+</section>
+<!-- END: DocumentLibrarySection -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: FloatingBrandBadge (Optional aesthetic footer detail) -->
+<aside class="fixed bottom-5 left-5 z-20" data-purpose="floating-status">
+<div class="w-9 h-9 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-lg hover:bg-slate-800 transition-transform active:scale-95 cursor-pointer" title="Worrek System Active">
+<span class="text-xs font-semibold tracking-tighter">N</span>
+</div>
+</aside>
+<!-- END: FloatingBrandBadge -->
+</body></html>
