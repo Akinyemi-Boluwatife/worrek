@@ -282,7 +282,9 @@ documentRoute.delete("/:id", requireAuth, async (c) => {
       .returning({ id: document.id });
     if (!removed) return c.json({ message: "Document not found." }, 404);
 
-    await c.env.DOCUMENTS_BUCKET.delete(saved.storageKey);
+    await c.env.DOCUMENTS_BUCKET.delete(saved.storageKey).catch((error) => {
+      console.error("Deleted document file cleanup failed", error);
+    });
     return c.json({ data: removed });
   } catch (error) {
     console.error("DELETE /api/documents/:id failed", error);

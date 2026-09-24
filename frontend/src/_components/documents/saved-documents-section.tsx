@@ -1,10 +1,10 @@
 import { DocumentsList } from "@/_components/documents/documents-list";
-import { loadDocuments } from "@/_lib/documents";
+import { listDocuments } from "@/_lib/document-actions";
 
 export async function SavedDocumentsSection() {
-  const [activeResult, trashResult] = await Promise.all([loadDocuments("active"), loadDocuments("trash")]);
+  const { active, trash, error } = await listDocuments();
 
   return (
-    <DocumentsList active={activeResult.documents} trash={trashResult.documents} error={activeResult.error || trashResult.error} />
+    <DocumentsList active={active} trash={trash} error={error} />
   );
 }
