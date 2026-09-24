@@ -1,5 +1,3 @@
-import { documentListChanged } from "./document-actions";
-
 export type DocumentMetadata = {
   id: string;
   userId: string;
@@ -107,7 +105,6 @@ export async function saveDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
-      await documentListChanged().catch(() => {});
       return { success: true, document: body.data };
     }
 
@@ -137,7 +134,6 @@ export async function uploadDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
-      await documentListChanged().catch(() => {});
       return { success: true, document: body.data };
     }
 

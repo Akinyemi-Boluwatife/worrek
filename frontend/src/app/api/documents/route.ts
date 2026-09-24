@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+
 import { api } from "@/_lib/apiConstants";
 
 export async function POST(request: Request) {
@@ -11,6 +13,7 @@ export async function POST(request: Request) {
 
   try {
     const response = await api.uploadDocument(formData, cookie);
+    if (response.ok) revalidateTag("documents", { expire: 0 });
 
     return new Response(response.body, {
       status: response.status,

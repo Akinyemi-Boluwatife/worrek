@@ -202,6 +202,7 @@ export function Editor({
       }
 
       if (result.success) {
+        router.refresh();
         setCurrentDocument({
           id: result.document.id,
           title: result.document.title,

@@ -42,6 +42,7 @@ export function DocumentsActions() {
     const result = await uploadDocument(formData);
 
     if (result.success) {
+      router.refresh();
       router.push(`/editor/${result.document.id}`);
       return;
     }

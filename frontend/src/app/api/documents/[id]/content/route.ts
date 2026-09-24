@@ -1,3 +1,5 @@
+import { revalidateTag } from "next/cache";
+
 import { api } from "@/_lib/apiConstants";
 
 const MAX_DOCX_BYTES = 10 * 1024 * 1024;
@@ -51,6 +53,7 @@ export async function PUT(
       body,
       request.headers.get("cookie") ?? "",
     );
+    if (response.ok) revalidateTag("documents", { expire: 0 });
     return new Response(response.body, {
       status: response.status,
       headers: {

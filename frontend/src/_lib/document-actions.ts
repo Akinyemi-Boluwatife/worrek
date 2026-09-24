@@ -4,9 +4,6 @@ import { updateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 import { api } from "./apiConstants";
-export async function documentListChanged() {
-  updateTag("documents");
-}
 
 type RenameDocumentResult =
   | { success: true; title: string }
