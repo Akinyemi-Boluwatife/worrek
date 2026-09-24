@@ -1,34 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import { deleteDocumentForever, moveDocumentToTrash, renameDocument, restoreDocument } from "@/_lib/document-actions";
 import type { DocumentListItem } from "@/_lib/document-client";
+import { formatDate, formatSize } from "@/_lib/utils";
 
 type View = "active" | "trash";
 type Sort = "recent" | "oldest" | "name";
 type Dialog = { type: "rename" | "delete"; document: DocumentListItem } | null;
-
-function formatSize(size: number | null) {
-  if (size === null) return "Word document";
-  if (size < 1024) return `${size} B`;
-  if (size < 1024 * 1024) return `${Math.round(size / 1024)} KB`;
-  return `${(size / (1024 * 1024)).toFixed(1)} MB`;
-}
-
-function formatDate(value: string) {
-  const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "Date unavailable" : new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric" }).format(date);
-}
 
 function DocumentIcon() {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="size-6" aria-hidden="true"><path d="M6.5 2.75h7l4 4v13.5a1 1 0 0 1-1 1h-10a1 1 0 0 1-1-1v-16.5a1 1 0 0 1 1-1Z" /><path d="M13.5 2.75v4h4M8.5 12h6M8.5 15.5h6" /></svg>;
 }
 
 export function DocumentsList({ active, trash, error }: { active: DocumentListItem[]; trash: DocumentListItem[]; error: string }) {
-  const router = useRouter();
   const [view, setView] = useState<View>("active");
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<Sort>("recent");
@@ -82,7 +69,6 @@ export function DocumentsList({ active, trash, error }: { active: DocumentListIt
     setPending(false);
     if (!result.success) { setMessage(result.message); return; }
     setDialog(null);
-    router.refresh();
   }
 
   async function submitRename(event: React.FormEvent) {
@@ -94,7 +80,7 @@ export function DocumentsList({ active, trash, error }: { active: DocumentListIt
     const result = await renameDocument(dialog.document.id, trimmed);
     setPending(false);
     if (!result.success) { setMessage(result.message); return; }
-    setDialog(null); router.refresh();
+    setDialog(null);
   }
 
   return <section aria-label="Saved documents" className="mt-12 pb-16">

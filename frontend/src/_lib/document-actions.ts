@@ -4,6 +4,34 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 
 import { api } from "./apiConstants";
+import type { DocumentListItem } from "./document-client";
+
+export async function listDocuments(): Promise<{
+  active: DocumentListItem[];
+  trash: DocumentListItem[];
+  error: string;
+}> {
+  try {
+    const cookie = (await cookies()).toString();
+    const responses = await Promise.all([
+      api.listDocuments(cookie, "active"),
+      api.listDocuments(cookie, "trash"),
+    ]);
+    if (responses.some((response) => !response.ok)) throw new Error("Document list failed");
+
+    const [activeBody, trashBody] = await Promise.all(responses.map((response) => response.json())) as [
+      { data?: DocumentListItem[] },
+      { data?: DocumentListItem[] },
+    ];
+    if (!Array.isArray(activeBody.data) || !Array.isArray(trashBody.data)) {
+      throw new Error("Invalid documents response");
+    }
+
+    return { active: activeBody.data, trash: trashBody.data, error: "" };
+  } catch {
+    return { active: [], trash: [], error: "We couldn't load your documents right now." };
+  }
+}
 
 type RenameDocumentResult =
   | { success: true; title: string }
