@@ -11,6 +11,35 @@ type RenameDocumentResult =
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
+type DocumentActionResult = { success: true } | { success: false; message: string };
+
+async function changeDocument(id: string, action: "trash" | "restore" | "delete"): Promise<DocumentActionResult> {
+  if (typeof id !== "string" || !UUID_PATTERN.test(id)) {
+    return { success: false, message: "This document could not be found." };
+  }
+
+  try {
+    const cookie = (await cookies()).toString();
+    const response = action === "trash" ? await api.trashDocument(id, cookie)
+      : action === "restore" ? await api.restoreDocument(id, cookie)
+      : await api.deleteDocumentForever(id, cookie);
+    if (!response.ok) {
+      if (response.status === 401) return { success: false, message: "Please sign in again." };
+      if (response.status === 404) return { success: false, message: "This document could not be found." };
+      const body = (await response.json().catch(() => null)) as { message?: string } | null;
+      return { success: false, message: body?.message ?? "We couldn't update this document right now." };
+    }
+    revalidatePath("/documents");
+    return { success: true };
+  } catch {
+    return { success: false, message: "We couldn't update this document right now." };
+  }
+}
+
+export async function moveDocumentToTrash(id: string) { return changeDocument(id, "trash"); }
+export async function restoreDocument(id: string) { return changeDocument(id, "restore"); }
+export async function deleteDocumentForever(id: string) { return changeDocument(id, "delete"); }
+
 export async function renameDocument(
   id: string,
   title: string,

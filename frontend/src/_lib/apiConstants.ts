@@ -36,8 +36,8 @@ export const api = {
       cache: "no-store",
     }),
 
-  listDocuments: (cookie: string) =>
-    request("/api/documents", {
+  listDocuments: (cookie: string, view: "active" | "trash" = "active") =>
+    request(view === "trash" ? "/api/documents?view=trash" : "/api/documents", {
       headers: { cookie },
       cache: "no-store",
     }),
@@ -48,6 +48,21 @@ export const api = {
       headers: { cookie, "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
       cache: "no-store",
+    }),
+
+  trashDocument: (id: string, cookie: string) =>
+    request(`/api/documents/${encodeURIComponent(id)}/trash`, {
+      method: "POST", headers: { cookie }, cache: "no-store",
+    }),
+
+  restoreDocument: (id: string, cookie: string) =>
+    request(`/api/documents/${encodeURIComponent(id)}/restore`, {
+      method: "POST", headers: { cookie }, cache: "no-store",
+    }),
+
+  deleteDocumentForever: (id: string, cookie: string) =>
+    request(`/api/documents/${encodeURIComponent(id)}`, {
+      method: "DELETE", headers: { cookie }, cache: "no-store",
     }),
 
   getDocumentContent: (id: string, cookie: string) =>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
-import { uploadDocument } from "@/_lib/documents";
+import { uploadDocument } from "@/_lib/document-client";
 
 const MAX_DOCX_BYTES = 10 * 1024 * 1024;
 
@@ -69,14 +69,16 @@ export function DocumentsActions() {
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isImporting}
-          className="inline-flex min-h-11 flex-1 cursor-pointer items-center justify-center rounded-lg border border-[#d4d8de] bg-white px-5 text-[12px] font-[650] text-foreground transition-colors hover:border-[#b8cbed] hover:bg-brand-light focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-65 motion-reduce:transition-none sm:flex-none"
+          className="inline-flex min-h-11 flex-1 cursor-pointer items-center justify-center gap-2 rounded-lg border border-[#e2e8f0] bg-white px-4 text-sm font-medium text-[#334155] shadow-sm transition-colors hover:border-[#cbd5e1] hover:bg-[#f8fafc] focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand disabled:cursor-not-allowed disabled:opacity-65 motion-reduce:transition-none sm:flex-none"
         >
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4 text-[#64748b]"><path d="M4 16v1a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3v-1M8 8l4-4 4 4M12 4v12" /></svg>
           {isImporting ? "Importing…" : "Import file document"}
         </button>
         <Link
           href="/editor/new"
-          className="inline-flex min-h-11 flex-1 items-center justify-center rounded-lg bg-brand px-5 text-[12px] font-[650] text-white transition-colors hover:bg-brand-hover focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand motion-reduce:transition-none sm:flex-none"
+          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-lg bg-brand px-5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-brand-hover focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-brand motion-reduce:transition-none sm:flex-none"
         >
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="size-4"><path d="M12 4v16M4 12h16" /></svg>
           New document
         </Link>
       </div>
