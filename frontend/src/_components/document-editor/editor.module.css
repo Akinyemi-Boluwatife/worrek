@@ -42,6 +42,140 @@
   --doc-shadow-lg: rgba(53, 70, 104, 0.18);
 }
 
+.topBar {
+  position: relative;
+  z-index: 30;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  height: 44px;
+  padding: 0 18px;
+  flex: none;
+  border-bottom: 1px solid #e4e8ef;
+  background: #fff;
+  color: #202938;
+  font-family: var(--font);
+}
+
+.identityGroup,
+.brandLink,
+.topActions,
+.renameForm {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.identityGroup { gap: 10px; }
+.brandLink { gap: 8px; flex: none; font-size: 13px; font-weight: 700; color: #192332; }
+.brandMark { display: grid; place-items: center; width: 32px; height: 32px; border: 1px solid #e1e6ee; border-radius: 9px; background: #f7f9fc; color: #4274dc; }
+.brandMark svg { width: 20px; height: 20px; }
+.brandName { white-space: nowrap; }
+.breadcrumbArrow { color: #adb7c5; font-size: 22px; line-height: 1; }
+
+.documentTitle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 250px;
+  padding: 6px 7px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #303b4c;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 650;
+  text-align: left;
+}
+.documentTitle:hover:not(:disabled) { background: #f3f5f8; }
+.documentTitle:disabled { cursor: default; }
+.documentTitle span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.documentTitle svg { width: 13px; height: 13px; flex: none; color: #8b96a6; }
+.renameForm { gap: 5px; }
+.renameInput { width: min(190px, 28vw); min-width: 75px; padding: 6px 8px; border: 1px solid #cbd4e0; border-radius: 7px; background: #fff; font-size: 12px; outline: none; }
+.renameInput:focus { border-color: #4274dc; box-shadow: 0 0 0 3px #e8efff; }
+.renameConfirm,
+.renameCancel { flex: none; padding: 6px 8px; border-radius: 7px; cursor: pointer; font-size: 11px; font-weight: 650; }
+.renameConfirm { border: 1px solid #1d2838; background: #1d2838; color: white; }
+.renameCancel { border: 1px solid #d9e0e9; background: white; color: #526073; }
+.renameConfirm:disabled,
+.renameCancel:disabled { cursor: default; opacity: .6; }
+
+.saveStatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+  max-width: 170px;
+  padding: 4px 8px;
+  border: 1px solid #e5e9ef;
+  border-radius: 999px;
+  background: #f7f9fb;
+  color: #667386;
+  font-size: 10px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.saveStatus svg { width: 13px; height: 13px; flex: none; }
+.saveStatus span { overflow: hidden; text-overflow: ellipsis; }
+.saveStatusError { border-color: #f0d5d5; background: #fff6f6; color: #a34949; }
+
+.workspaceTabs { display: flex; align-items: center; gap: 2px; padding: 3px; border: 1px solid #e5e9ef; border-radius: 9px; background: #f5f7fa; font-size: 12px; }
+.activeTab,
+.inactiveTab { padding: 6px 12px; border-radius: 6px; white-space: nowrap; }
+.activeTab { background: #fff; box-shadow: 0 1px 3px #15253b12; color: #202938; font-weight: 700; }
+.inactiveTab { color: #637083; }
+.inactiveTab:hover { color: #202938; background: #fff; }
+
+.topActions { justify-content: flex-end; gap: 5px; }
+.iconAction { display: grid; place-items: center; flex: none; width: 31px; height: 31px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: #617084; cursor: pointer; }
+.iconAction:hover { border-color: #e6ebf1; background: #f4f6f9; color: #202938; }
+.iconAction svg { width: 17px; height: 17px; }
+.primaryAction { display: inline-flex; align-items: center; justify-content: center; gap: 6px; flex: none; min-height: 32px; padding: 0 11px; border: 1px solid #1c293b; border-radius: 8px; background: #1c293b; color: white; cursor: pointer; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.primaryAction:hover:not(:disabled) { background: #2e3d52; }
+.primaryAction:disabled { cursor: not-allowed; opacity: .55; }
+.primaryAction svg { width: 15px; height: 15px; }
+.moreMenu { position: relative; flex: none; }
+.moreMenu summary { list-style: none; }
+.moreMenu summary::-webkit-details-marker { display: none; }
+.morePanel { position: absolute; top: calc(100% + 8px); right: 0; display: flex; flex-direction: column; gap: 2px; width: 176px; padding: 5px; border: 1px solid #dce3ec; border-radius: 10px; background: #fff; box-shadow: 0 12px 28px #17233822; }
+.mobileMenuAction { display: none; }
+.logoutItem :global(button) { width: 100%; padding: 8px 10px; border: 0; border-radius: 6px; background: transparent; color: #536174; cursor: pointer; font-size: 12px; font-weight: 600; text-align: left; }
+.logoutItem :global(button:hover) { background: #f3f5f8; color: #202938; }
+
+.inspectorHeader { display: flex; align-items: center; gap: 9px; min-height: 64px; padding: 10px 15px; border-bottom: 1px solid #e9edf2; background: #fff; }
+.inspectorHeader strong { color: #293547; font-size: 13px; line-height: 1.2; }
+.inspectorMessage { margin: auto; padding: 24px; color: #758195; font-size: 12px; text-align: center; }
+.openDocumentCard { display: flex; flex-direction: column; align-items: center; gap: 9px; width: min(260px, calc(100% - 36px)); margin: auto; padding: 28px 16px; border: 1px dashed #cbd5e2; border-radius: 12px; background: #f9fbfe; color: #667386; cursor: pointer; text-align: center; }
+.openDocumentCard:hover { border-color: #8aa9e9; background: #f5f8ff; }
+.openDocumentCard strong { color: #334155; font-size: 12px; }
+.openDocumentCard > span:last-child { font-size: 11px; line-height: 1.5; }
+.openDocumentIcon { display: grid; place-items: center; width: 42px; height: 42px; border: 1px solid #dae5fa; border-radius: 11px; background: #edf3ff; color: #4274dc; }
+.openDocumentIcon svg { width: 22px; height: 22px; }
+
+.inspectorBody { display: flex; flex: 1; flex-direction: column; min-height: 0; overflow-y: auto; padding: 18px 15px; }
+.suggestionCard { display: flex; flex-direction: column; gap: 10px; width: min(100%, 320px); padding: 14px; border: 1px solid #e1e7ef; border-radius: 12px; background: #fff; box-shadow: 0 1px 4px #2432470d; }
+.suggestionBadge { align-self: flex-start; padding: 4px 7px; border: 1px solid #e2e8f1; border-radius: 5px; background: #f5f7fa; color: #536176; font-size: 9px; font-weight: 750; letter-spacing: .05em; }
+.suggestionCard h3 { color: #283549; font-size: 13px; font-weight: 700; }
+.suggestionCard p { color: #778398; font-size: 11px; line-height: 1.6; }
+.suggestionPreview { padding: 10px; border: 1px solid #e5eaf0; border-radius: 8px; background: #f8fafc; color: #526074; font-size: 11px; line-height: 1.5; }
+.composerDock { flex: none; padding: 11px 12px 10px; border-top: 1px solid #e8edf3; background: #fff; }
+.composerBox { padding: 9px; border: 1px solid #dfe6ef; border-radius: 11px; background: #fbfcfe; box-shadow: 0 1px 3px #20304b0b; }
+.composerBox:focus-within { border-color: #98b3e9; box-shadow: 0 0 0 3px #edf3ff; }
+.composerScope { display: flex; align-items: center; gap: 5px; width: fit-content; padding: 4px 6px; border: 1px solid #e2e8f1; border-radius: 5px; background: #f4f7fa; color: #536174; font-size: 10px; font-weight: 650; }
+.composerScope svg { width: 13px; height: 13px; }
+.composerInput { width: 100%; min-height: 40px; padding: 11px 2px 6px; border: 0; background: transparent; color: #334155; font-family: var(--font); font-size: 11px; outline: none; }
+.composerInput::placeholder { color: #9da8b7; }
+.composerFooter { display: flex; align-items: center; justify-content: space-between; color: #9da8b7; font-size: 10px; }
+.sendButton { display: grid; place-items: center; width: 28px; height: 28px; border: 0; border-radius: 7px; background: #1c293b; color: #fff; cursor: pointer; }
+.sendButton:hover { background: #2e3d52; }
+.sendButton svg { width: 16px; height: 16px; }
+.composerNote { padding-top: 7px; color: #a1aabb; font-size: 9px; text-align: center; }
+
 .menuBar :global(.docx-menubar__menu-root) {
   display: flex;
   align-items: center;
@@ -49,11 +183,11 @@
 }
 
 .menuBar :global(.docx-menubar__trigger) {
-  padding: 5px 10px;
+  padding: 5px 9px;
   border-radius: 4px;
   font-family: var(--font);
-  font-size: 11px;
-  color: #777f8c;
+  font-size: 12px;
+  color: #5e6a7b;
   line-height: 1;
 }
 
@@ -68,11 +202,16 @@
 }
 
 .ribbon:global(.docx-toolbar) {
-  background: #f7f8fa;
+  background: #fff;
   border: 0;
   border-radius: 0;
   flex: none;
 }
+
+.ribbon :global(.docx-toolbar__button:hover:not(:disabled)),
+.ribbon :global(.docx-toolbar__picker:hover:not(:disabled)) { background: #f2f5f9; }
+
+.ribbon :global(.docx-toolbar__button[data-active]) { background: #eef3ff; color: #4274dc; }
 
 .scrollArea :global(.docx-editor__scroll-container) {
   height: 100%;
@@ -94,6 +233,8 @@
 }
 
 @media print {
+  .topBar { display: none; }
+
   .frame,
   .workspace {
     height: auto;
@@ -116,6 +257,10 @@
 }
 
 @media (max-width: 950px) {
+  .topBar { grid-template-columns: minmax(0, 1fr) auto; }
+  .workspaceTabs { display: none; }
+  .saveStatus { display: none; }
+  .saveStatusError { position: absolute; top: calc(100% + 3px); left: 12px; z-index: 40; display: flex; max-width: min(420px, calc(100vw - 24px)); border-radius: 7px; box-shadow: 0 6px 18px #1723381a; }
   .menuBar :global(.docx-menubar__trigger) {
     font-size: 10px;
     padding-inline: 8px;
@@ -123,6 +268,23 @@
 }
 
 @media (max-width: 650px) {
+  .topBar { height: 44px; gap: 8px; padding-inline: 9px; }
+  .identityGroup { gap: 5px; }
+  .brandName { display: none; }
+  .brandMark { width: 30px; height: 30px; }
+  .breadcrumbArrow { font-size: 17px; }
+  .identityRenaming .brandLink,
+  .identityRenaming .breadcrumbArrow { display: none; }
+  .documentTitle { max-width: min(32vw, 150px); padding-inline: 3px; font-size: 11px; }
+  .documentTitle svg { display: none; }
+  .renameInput { width: min(120px, 25vw); }
+  .renameCancel { display: none; }
+  .topActions { gap: 2px; }
+  .desktopAction { display: none; }
+  .primaryAction { min-height: 30px; padding-inline: 7px; font-size: 10px; }
+  .primaryAction svg { display: none; }
+  .mobileMenuAction { display: block; width: 100%; padding: 8px 10px; border: 0; border-radius: 6px; background: transparent; color: #536174; cursor: pointer; font-size: 12px; font-weight: 600; text-align: left; }
+  .mobileMenuAction:hover { background: #f3f5f8; color: #202938; }
   .menuBar :global(.docx-menubar__trigger) {
     font-size: 10px;
     padding-inline: 8px;
