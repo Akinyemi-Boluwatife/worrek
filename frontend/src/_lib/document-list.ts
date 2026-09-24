@@ -2,6 +2,7 @@ import "server-only";
 
 import { cacheLife, cacheTag } from "next/cache";
 import { cookies } from "next/headers";
+import { unstable_rethrow } from "next/navigation";
 
 import { api } from "./apiConstants";
 import type { DocumentListItem } from "./document-client";
@@ -15,7 +16,8 @@ type DocumentList = {
 export async function listDocuments(): Promise<DocumentList> {
   try {
     return await getCachedDocuments();
-  } catch {
+  } catch (error) {
+    unstable_rethrow(error);
     return { active: [], trash: [], error: "We couldn't load your documents right now." };
   }
 }
