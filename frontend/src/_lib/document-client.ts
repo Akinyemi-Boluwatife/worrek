@@ -1,3 +1,5 @@
+import { documentListChanged } from "./document-actions";
+
 export type DocumentMetadata = {
   id: string;
   userId: string;
@@ -27,6 +29,14 @@ export type OpenDocumentResult =
     }
   | { success: false; message: string };
 
+async function refreshDocumentList() {
+  try {
+    await documentListChanged();
+  } catch {
+    // The document write already succeeded; a full reload will fetch the list again.
+  }
+}
+
 export async function openDocument(id: string): Promise<OpenDocumentResult> {
   performance.clearMarks("document-open:start");
   performance.clearMarks("document-open:headers");
@@ -35,10 +45,7 @@ export async function openDocument(id: string): Promise<OpenDocumentResult> {
   performance.mark("document-open:start");
 
   try {
-    const response = await fetch(
-      `/api/documents/${encodeURIComponent(id)}/content`,
-      { cache: "no-store" },
-    );
+    const response = await fetch(`/api/documents/${encodeURIComponent(id)}/content`);
     performance.mark("document-open:headers");
     performance.measure("document-open:request", "document-open:start", "document-open:headers");
 
@@ -108,6 +115,7 @@ export async function saveDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
+      await refreshDocumentList();
       return { success: true, document: body.data };
     }
 
@@ -137,7 +145,7 @@ export async function uploadDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
-
+      await refreshDocumentList();
       return { success: true, document: body.data };
     }
 

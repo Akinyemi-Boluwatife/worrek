@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { openDocument, type OpenDocumentResult } from "@/_lib/document-client";
 
-function EditorLoadingShell() {
+export function EditorLoadingShell() {
   return (
     <div className="flex h-dvh flex-col bg-[#eef1f6]">
       <header className="flex h-11 shrink-0 items-center border-b border-[#e3e6eb] bg-white px-5">

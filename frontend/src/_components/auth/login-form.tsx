@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { authClient } from "@/_lib/auth-client";
@@ -13,7 +12,6 @@ import {
 import { PasswordField } from "./password-field";
 
 export function LoginForm() {
-  const router = useRouter();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -40,7 +38,7 @@ export function LoginForm() {
         return;
       }
 
-      router.push("/documents");
+      window.location.replace("/documents");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
