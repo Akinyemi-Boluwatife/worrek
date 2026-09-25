@@ -1,37 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { updateTag } from "next/cache";
 import { cookies } from "next/headers";
 
 import { api } from "./apiConstants";
-import type { DocumentListItem } from "./document-client";
-
-export async function listDocuments(): Promise<{
-  active: DocumentListItem[];
-  trash: DocumentListItem[];
-  error: string;
-}> {
-  try {
-    const cookie = (await cookies()).toString();
-    const responses = await Promise.all([
-      api.listDocuments(cookie, "active"),
-      api.listDocuments(cookie, "trash"),
-    ]);
-    if (responses.some((response) => !response.ok)) throw new Error("Document list failed");
-
-    const [activeBody, trashBody] = await Promise.all(responses.map((response) => response.json())) as [
-      { data?: DocumentListItem[] },
-      { data?: DocumentListItem[] },
-    ];
-    if (!Array.isArray(activeBody.data) || !Array.isArray(trashBody.data)) {
-      throw new Error("Invalid documents response");
-    }
-
-    return { active: activeBody.data, trash: trashBody.data, error: "" };
-  } catch {
-    return { active: [], trash: [], error: "We couldn't load your documents right now." };
-  }
-}
 
 type RenameDocumentResult =
   | { success: true; title: string }
@@ -57,7 +29,7 @@ async function changeDocument(id: string, action: "trash" | "restore" | "delete"
       const body = (await response.json().catch(() => null)) as { message?: string } | null;
       return { success: false, message: body?.message ?? "We couldn't update this document right now." };
     }
-    revalidatePath("/documents");
+    updateTag("documents");
     return { success: true };
   } catch {
     return { success: false, message: "We couldn't update this document right now." };
@@ -107,7 +79,7 @@ export async function renameDocument(
       return { success: false, message: "We couldn't rename this document right now." };
     }
 
-    revalidatePath("/documents");
+    updateTag("documents");
     return { success: true, title: body.data.title };
   } catch {
     return { success: false, message: "We couldn't rename this document right now." };

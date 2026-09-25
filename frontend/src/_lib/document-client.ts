@@ -35,10 +35,7 @@ export async function openDocument(id: string): Promise<OpenDocumentResult> {
   performance.mark("document-open:start");
 
   try {
-    const response = await fetch(
-      `/api/documents/${encodeURIComponent(id)}/content`,
-      { cache: "no-store" },
-    );
+    const response = await fetch(`/api/documents/${encodeURIComponent(id)}/content`);
     performance.mark("document-open:headers");
     performance.measure("document-open:request", "document-open:start", "document-open:headers");
 
@@ -137,7 +134,6 @@ export async function uploadDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
-
       return { success: true, document: body.data };
     }
 

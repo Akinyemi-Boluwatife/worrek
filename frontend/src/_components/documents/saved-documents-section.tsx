@@ -1,5 +1,5 @@
 import { DocumentsList } from "@/_components/documents/documents-list";
-import { listDocuments } from "@/_lib/document-actions";
+import { listDocuments } from "@/_lib/document-list";
 
 export async function SavedDocumentsSection() {
   const { active, trash, error } = await listDocuments();

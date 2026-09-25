@@ -11,8 +11,7 @@ function request(path: string, init?: RequestInit) {
 }
 
 export const api = {
-  databaseHealth: () =>
-    request("/api/health/database", { cache: "no-store" }),
+  databaseHealth: () => request("/api/health/database"),
 
   joinWaitlist: (body: {
     firstName: string;
@@ -25,7 +24,6 @@ export const api = {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(body),
-      cache: "no-store",
     }),
 
   uploadDocument: (body: FormData, cookie?: string) =>
@@ -33,13 +31,11 @@ export const api = {
       method: "POST",
       headers: cookie ? { cookie } : undefined,
       body,
-      cache: "no-store",
     }),
 
   listDocuments: (cookie: string, view: "active" | "trash" = "active") =>
     request(view === "trash" ? "/api/documents?view=trash" : "/api/documents", {
       headers: { cookie },
-      cache: "no-store",
     }),
 
   renameDocument: (id: string, title: string, cookie: string) =>
@@ -47,28 +43,26 @@ export const api = {
       method: "PATCH",
       headers: { cookie, "Content-Type": "application/json" },
       body: JSON.stringify({ title }),
-      cache: "no-store",
     }),
 
   trashDocument: (id: string, cookie: string) =>
     request(`/api/documents/${encodeURIComponent(id)}/trash`, {
-      method: "POST", headers: { cookie }, cache: "no-store",
+      method: "POST", headers: { cookie },
     }),
 
   restoreDocument: (id: string, cookie: string) =>
     request(`/api/documents/${encodeURIComponent(id)}/restore`, {
-      method: "POST", headers: { cookie }, cache: "no-store",
+      method: "POST", headers: { cookie },
     }),
 
   deleteDocumentForever: (id: string, cookie: string) =>
     request(`/api/documents/${encodeURIComponent(id)}`, {
-      method: "DELETE", headers: { cookie }, cache: "no-store",
+      method: "DELETE", headers: { cookie },
     }),
 
   getDocumentContent: (id: string, cookie: string) =>
     request(`/api/documents/${encodeURIComponent(id)}/content`, {
       headers: { cookie },
-      cache: "no-store",
     }),
 
   saveDocumentContent: (id: string, body: ArrayBuffer, cookie: string) =>
@@ -79,6 +73,5 @@ export const api = {
         "Content-Type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       },
       body,
-      cache: "no-store",
     }),
 };

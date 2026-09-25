@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { authClient } from "@/_lib/auth-client";
@@ -33,7 +32,6 @@ function describeStrength(score: number) {
 }
 
 export function SignupForm() {
-  const router = useRouter();
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isPending, setIsPending] = useState(false);
@@ -66,7 +64,7 @@ export function SignupForm() {
         return;
       }
 
-      router.push("/documents");
+      window.location.replace("/documents");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
