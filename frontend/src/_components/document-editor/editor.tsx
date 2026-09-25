@@ -242,7 +242,7 @@ export function Editor({
     <div className={`${styles.frame} flex h-dvh min-w-0 flex-col overflow-hidden bg-[#eef1f6]`}>
       <header className={styles.topBar}>
         <div className={`${styles.identityGroup} ${isRenaming ? styles.identityRenaming : ""}`}>
-          <Link href="/documents" className={styles.brandLink} aria-label="Worrek documents">
+          <Link href="/documents" prefetch={true} className={styles.brandLink} aria-label="Worrek documents">
             <span className={styles.brandMark} aria-hidden="true">
               <svg viewBox="0 0 36 36" fill="none"><path d="M4 9.5 10 27l8-13 8 13 6-17.5" stroke="currentColor" strokeWidth="5.3" strokeLinecap="round" strokeLinejoin="round" /><path d="m14 9 4 5.5L22 9" stroke="currentColor" strokeWidth="4.3" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
@@ -297,7 +297,7 @@ export function Editor({
 
         <nav className={styles.workspaceTabs} aria-label="Workspace">
           <span aria-current="page" className={styles.activeTab}>Document</span>
-          <Link href="/documents" className={styles.inactiveTab}>Files</Link>
+          <Link href="/documents" prefetch={true} className={styles.inactiveTab}>Files</Link>
         </nav>
 
         <div className={styles.topActions}>
@@ -454,7 +454,7 @@ export function Editor({
               {isBlank && (isLoadingDocument || loadError) ? (
                 <div className={styles.inspectorMessage} role={loadError ? "alert" : "status"}>
                   {loadError || "Opening document…"}
-                  {loadError ? <p className="mt-3"><Link href="/documents" className="text-brand underline">Back to documents</Link></p> : null}
+                  {loadError ? <p className="mt-3"><Link href="/documents" prefetch={true} className="text-brand underline">Back to documents</Link></p> : null}
                 </div>
               ) : isBlank ? (
                 <button

@@ -12,7 +12,7 @@ export function EditorLoadingShell() {
       <span className="sr-only" role="status">Opening document…</span>
       <header className="grid h-11 shrink-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4 border-b border-[#e3e6eb] bg-white px-[18px] max-[950px]:grid-cols-[minmax(0,1fr)_auto]">
         <div className="flex min-w-0 items-center gap-2.5">
-          <Link href="/documents" className="flex shrink-0 items-center gap-2 text-[13px] font-bold text-[#192332]">
+          <Link href="/documents" prefetch={true} className="flex shrink-0 items-center gap-2 text-[13px] font-bold text-[#192332]">
             <span className="grid size-8 place-items-center rounded-[9px] border border-[#e1e6ee] bg-[#f7f9fc] text-[#4274dc]" aria-hidden="true">
               <svg viewBox="0 0 36 36" fill="none" className="size-5"><path d="M4 9.5 10 27l8-13 8 13 6-17.5" stroke="currentColor" strokeWidth="5.3" strokeLinecap="round" strokeLinejoin="round" /><path d="m14 9 4 5.5L22 9" stroke="currentColor" strokeWidth="4.3" strokeLinecap="round" strokeLinejoin="round" /></svg>
             </span>
