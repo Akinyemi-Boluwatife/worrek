@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { EditorLoadingShell, EditorPageContent } from "@/_components/document-editor/editor-page-content";
+import { EditorLoadingShell } from "@/_components/document-editor/editor-loading-shell";
+import { EditorPageContent } from "@/_components/document-editor/editor-page-content";
 
 export const metadata: Metadata = {
   title: "Edit document — Worrek",
 };
+
+export const prefetch = "partial";
 
 export default function SavedDocumentPage({
   params,

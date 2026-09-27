@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 import {
   DocxEditor,
   LocaleProvider,
@@ -13,14 +13,17 @@ import type { DocxEditorInstance } from "@docx-editor.dev/core/editor";
 import en from "@docx-editor.dev/i18n/en";
 import "@docx-editor.dev/core/styles/editor.css";
 import { LogoutButton } from "@/_components/auth/logout-button";
-import { renameDocument } from "@/_lib/document-actions";
-import { openDocument, saveDocument, uploadDocument, type OpenDocumentResult } from "@/_lib/document-client";
+import {
+  downloadEditorDocument,
+  readEditorFile,
+  renameEditorDocument,
+  saveEditorDocument,
+} from "@/_lib/editor-page";
+import type { OpenDocumentResult } from "@/_lib/document-client";
+import { useEditorDocumentLoad } from "@/_lib/use-editor-document-load";
 import { useEditorStore } from "@/_stores/editor.store";
 import styles from "./editor.module.css";
 import { ChatPanel } from "./chat-panel";
-
-const DOCX_MIME =
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
 function WordCount() {
   const editor = useDocxEditor();
@@ -50,20 +53,26 @@ export function Editor({
   documentLoad?: Promise<OpenDocumentResult>;
 }) {
   const router = useRouter();
-  const editorRef = useRef<DocxEditorInstance | null>(null);
-  const [editorInstance, setEditorInstance] = useState<DocxEditorInstance | null>(null);
-  const loadSequence = useRef(0);
-  const [buffer, setBuffer] = useState<ArrayBuffer | null>(null);
-  const [isLoadingDocument, setIsLoadingDocument] = useState(Boolean(documentId));
-  const [isEditorReady, setIsEditorReady] = useState(false);
-  const [loadError, setLoadError] = useState("");
+  const [editorInstance, setEditorInstance] =
+    useState<DocxEditorInstance | null>(null);
+  const {
+    editorRef,
+    loadSequenceRef,
+    buffer,
+    setBuffer,
+    isLoadingDocument,
+    setIsLoadingDocument,
+    isEditorReady,
+    setIsEditorReady,
+    loadError,
+    setLoadError,
+    fileName,
+    setFileName,
+  } = useEditorDocumentLoad({ newDocument, documentId, documentLoad });
   const [isRenaming, setIsRenaming] = useState(false);
   const [draftTitle, setDraftTitle] = useState("");
   const [isSavingName, startNameTransition] = useTransition();
   const [renameError, setRenameError] = useState("");
-  const [fileName, setFileName] = useState(
-    newDocument ? "Untitled document.docx" : "document.docx",
-  );
   const fileInputRef = useRef<HTMLInputElement>(null);
   const moreMenuRef = useRef<HTMLDetailsElement>(null);
   const isBlank = buffer === null && !newDocument;
@@ -81,33 +90,6 @@ export function Editor({
   const setDocumentTitle = useEditorStore((state) => state.setDocumentTitle);
   const setSaveStatus = useEditorStore((state) => state.setSaveStatus);
   const resetDocument = useEditorStore((state) => state.resetDocument);
-
-  useEffect(() => {
-    resetDocument();
-    if (!documentId) return;
-
-    let cancelled = false;
-    const sequence = ++loadSequence.current;
-    editorRef.current = null;
-    void (documentLoad ?? openDocument(documentId)).then((result) => {
-      if (cancelled || sequence !== loadSequence.current) return;
-      if (result.success) {
-        editorRef.current = null;
-        setIsEditorReady(false);
-        setBuffer(result.content);
-        setFileName(result.document.fileName);
-        setCurrentDocument({
-          id: result.document.id,
-          title: result.document.title,
-        });
-      } else {
-        setLoadError(result.message);
-      }
-      setIsLoadingDocument(false);
-    });
-
-    return () => { cancelled = true; };
-  }, [documentId, documentLoad, resetDocument, setCurrentDocument]);
 
   const isSaving = saveStatus === "saving";
   const saveLabel = isSaving
@@ -130,18 +112,31 @@ export function Editor({
   }
 
   async function onFileSelect(file: File) {
-    ++loadSequence.current;
-    editorRef.current = null;
-    setEditorInstance(null);
-    setIsEditorReady(false);
-    setIsRenaming(false);
-    setRenameError("");
-    setBuffer(await file.arrayBuffer());
-    setFileName(file.name);
-    setLoadError("");
-    setIsLoadingDocument(false);
-    resetDocument();
-    setDocumentTitle(file.name.replace(/\.docx$/i, ""));
+    const sequence = ++loadSequenceRef.current;
+    setIsLoadingDocument(true);
+
+    try {
+      const { content, fileName } = await readEditorFile(file);
+      if (sequence !== loadSequenceRef.current) return;
+
+      editorRef.current = null;
+      setEditorInstance(null);
+      setIsEditorReady(false);
+      setIsRenaming(false);
+      setRenameError("");
+      setBuffer(content);
+      setFileName(fileName);
+      setLoadError("");
+      resetDocument();
+      setDocumentTitle(file.name.replace(/\.docx$/i, ""));
+    } catch {
+      if (sequence !== loadSequenceRef.current) return;
+      const message = "We couldn't open this document. Please try again.";
+      setLoadError(message);
+      setSaveStatus("error", message);
+    } finally {
+      if (sequence === loadSequenceRef.current) setIsLoadingDocument(false);
+    }
   }
 
   function onFileInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -159,16 +154,17 @@ export function Editor({
     }
 
     if (currentDocumentId) {
-      startNameTransition(async () => {
-        const result = await renameDocument(currentDocumentId, title);
-        if (!result.success) {
-          setRenameError(result.message);
-          return;
-        }
-        setDocumentTitle(result.title);
-        setRenameError("");
-        setIsRenaming(false);
-      });
+      startNameTransition(() =>
+        renameEditorDocument(currentDocumentId, title).then((result) => {
+          if (!result.success) {
+            setRenameError(result.message);
+            return;
+          }
+          setDocumentTitle(result.title);
+          setRenameError("");
+          setIsRenaming(false);
+        }),
+      );
       return;
     }
 
@@ -177,84 +173,97 @@ export function Editor({
     setIsRenaming(false);
   }
 
-  async function onSaveToWorrek() {
+  function onSaveToWorrek() {
     if (isBlank || isLoadingDocument || !isEditorReady || isSaving) return;
 
     setSaveStatus("saving");
 
-    try {
-      const editor = editorRef.current;
-      const revisionAtSave = editor?.getDocumentHandle().revision;
-      const out = await editor?.save();
+    const editor = editorRef.current;
+    void saveEditorDocument({
+      editor,
+      documentId: currentDocumentId,
+      fileName,
+      title: currentDocumentTitle,
+    })
+      .then(({ result, revisionAtSave }) => {
+        if (!result) {
+          setSaveStatus(
+            "error",
+            "We couldn't read this document. Please try again.",
+          );
+          return;
+        }
 
-      if (!out) {
+        if (result.success) {
+          router.refresh();
+          setCurrentDocument({
+            id: result.document.id,
+            title: result.document.title,
+          });
+          if (editor?.getDocumentHandle().revision !== revisionAtSave)
+            setSaveStatus("idle");
+          if (!currentDocumentId)
+            router.replace(`/editor/${result.document.id}`);
+          return;
+        }
+
+        setSaveStatus("error", result.message);
+      })
+      .catch((error) => {
+        console.error(
+          "Saving document to Worrek failed:",
+          error instanceof Error ? error.message : "Unknown error",
+        );
+
         setSaveStatus(
           "error",
-          "We couldn't read this document. Please try again.",
+          "We couldn't save this document right now. Please try again.",
         );
-        return;
-      }
-
-      let result;
-      if (currentDocumentId) {
-        result = await saveDocument(currentDocumentId, out);
-      } else {
-        const file = new File([out], fileName, { type: DOCX_MIME });
-        const formData = new FormData();
-        formData.set("file", file);
-        formData.set("title", currentDocumentTitle || fileName.replace(/\.docx$/i, ""));
-        result = await uploadDocument(formData);
-      }
-
-      if (result.success) {
-        router.refresh();
-        setCurrentDocument({
-          id: result.document.id,
-          title: result.document.title,
-        });
-        if (editor?.getDocumentHandle().revision !== revisionAtSave) setSaveStatus("idle");
-        if (!currentDocumentId) router.replace(`/editor/${result.document.id}`);
-        return;
-      }
-
-      setSaveStatus("error", result.message);
-    } catch (error) {
-      console.error(
-        "Saving document to Worrek failed:",
-        error instanceof Error ? error.message : "Unknown error",
-      );
-
-      setSaveStatus(
-        "error",
-        "We couldn't save this document right now. Please try again.",
-      );
-    }
+      });
   }
 
-  async function onSaveDocx() {
+  function onSaveDocx() {
     if (!isEditorReady) return;
-    const out = await editorRef.current?.save();
-    if (!out) return;
-    const blob = new Blob([out], { type: DOCX_MIME });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(url);
+    void downloadEditorDocument(editorRef.current, fileName);
   }
 
   return (
-    <div className={`${styles.frame} flex h-dvh min-w-0 flex-col overflow-hidden bg-[#eef1f6]`}>
+    <div
+      className={`${styles.frame} flex h-dvh min-w-0 flex-col overflow-hidden bg-[#eef1f6]`}
+    >
       <header className={styles.topBar}>
-        <div className={`${styles.identityGroup} ${isRenaming ? styles.identityRenaming : ""}`}>
-          <Link href="/documents" prefetch={true} className={styles.brandLink} aria-label="Worrek documents">
+        <div
+          className={`${styles.identityGroup} ${isRenaming ? styles.identityRenaming : ""}`}
+        >
+          <Link
+            href="/documents"
+            prefetch={true}
+            className={styles.brandLink}
+            aria-label="Worrek documents"
+          >
             <span className={styles.brandMark} aria-hidden="true">
-              <svg viewBox="0 0 36 36" fill="none"><path d="M4 9.5 10 27l8-13 8 13 6-17.5" stroke="currentColor" strokeWidth="5.3" strokeLinecap="round" strokeLinejoin="round" /><path d="m14 9 4 5.5L22 9" stroke="currentColor" strokeWidth="4.3" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <svg viewBox="0 0 36 36" fill="none">
+                <path
+                  d="M4 9.5 10 27l8-13 8 13 6-17.5"
+                  stroke="currentColor"
+                  strokeWidth="5.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <path
+                  d="m14 9 4 5.5L22 9"
+                  stroke="currentColor"
+                  strokeWidth="4.3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </span>
             <span className={styles.brandName}>Worrek</span>
           </Link>
-          <span className={styles.breadcrumbArrow} aria-hidden="true">›</span>
+          <span className={styles.breadcrumbArrow} aria-hidden="true">
+            ›
+          </span>
           {isRenaming ? (
             <form onSubmit={onSaveName} className={styles.renameForm}>
               <input
@@ -275,10 +284,22 @@ export function Editor({
                 disabled={isSavingName}
                 className={styles.renameInput}
               />
-              <button type="submit" disabled={isSavingName} className={styles.renameConfirm}>
+              <button
+                type="submit"
+                disabled={isSavingName}
+                className={styles.renameConfirm}
+              >
                 {isSavingName ? "Saving…" : "Save name"}
               </button>
-              <button type="button" disabled={isSavingName} onClick={() => { setIsRenaming(false); setRenameError(""); }} className={styles.renameCancel}>
+              <button
+                type="button"
+                disabled={isSavingName}
+                onClick={() => {
+                  setIsRenaming(false);
+                  setRenameError("");
+                }}
+                className={styles.renameCancel}
+              >
                 Cancel
               </button>
             </form>
@@ -291,19 +312,52 @@ export function Editor({
               title="Rename document"
               aria-label={`Rename ${currentDocumentTitle || fileName}`}
             >
-              <span>{currentDocumentTitle || fileName.replace(/\.docx$/i, "")}</span>
-              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m5 7.5 5 5 5-5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <span>
+                {currentDocumentTitle || fileName.replace(/\.docx$/i, "")}
+              </span>
+              <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                <path
+                  d="m5 7.5 5 5 5-5"
+                  stroke="currentColor"
+                  strokeWidth="1.6"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
           )}
-          <span className={`${styles.saveStatus} ${saveStatus === "error" || renameError ? styles.saveStatusError : ""}`} role={saveStatus === "error" || renameError ? "alert" : "status"} title={renameError || saveError || statusLabel}>
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m4 10 4 4 8-8" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            <span>{renameError || (saveStatus === "error" ? saveError : statusLabel)}</span>
+          <span
+            className={`${styles.saveStatus} ${saveStatus === "error" || renameError ? styles.saveStatusError : ""}`}
+            role={saveStatus === "error" || renameError ? "alert" : "status"}
+            title={renameError || saveError || statusLabel}
+          >
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="m4 10 4 4 8-8"
+                stroke="currentColor"
+                strokeWidth="1.7"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            <span>
+              {renameError ||
+                (saveStatus === "error" ? saveError : statusLabel)}
+            </span>
           </span>
         </div>
 
         <nav className={styles.workspaceTabs} aria-label="Workspace">
-          <span aria-current="page" className={styles.activeTab}>Document</span>
-          <Link href="/documents" prefetch={true} className={styles.inactiveTab}>Files</Link>
+          <span aria-current="page" className={styles.activeTab}>
+            Document
+          </span>
+          <Link
+            href="/documents"
+            prefetch={true}
+            className={styles.inactiveTab}
+          >
+            Files
+          </Link>
         </nav>
 
         <div className={styles.topActions}>
@@ -321,7 +375,15 @@ export function Editor({
             title="Open .docx"
             aria-label="Open .docx"
           >
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M3 16V5.5A1.5 1.5 0 0 1 4.5 4H8l1.5 2H15a1.5 1.5 0 0 1 1.5 1.5V16H3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M3 9h13.5" stroke="currentColor" strokeWidth="1.5" /></svg>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M3 16V5.5A1.5 1.5 0 0 1 4.5 4H8l1.5 2H15a1.5 1.5 0 0 1 1.5 1.5V16H3Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <path d="M3 9h13.5" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
           </button>
           <button
             type="button"
@@ -330,25 +392,80 @@ export function Editor({
             title="Download .docx"
             aria-label="Download .docx"
           >
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 3v9m0 0 3-3m-3 3L7 9M4 14v2h12v-2" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M10 3v9m0 0 3-3m-3 3L7 9M4 14v2h12v-2"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
           </button>
           <button
             type="button"
             onClick={() => void onSaveToWorrek()}
-            disabled={isBlank || isLoadingDocument || !isEditorReady || isSaving || isRenaming}
+            disabled={
+              isBlank ||
+              isLoadingDocument ||
+              !isEditorReady ||
+              isSaving ||
+              isRenaming
+            }
             className={styles.primaryAction}
           >
-            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 15.5V4.5h10l2 2v9H4Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /><path d="M7 4.5v4h6v-4M7 15.5v-5h6v5" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" /></svg>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true">
+              <path
+                d="M4 15.5V4.5h10l2 2v9H4Z"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+              <path
+                d="M7 4.5v4h6v-4M7 15.5v-5h6v5"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinejoin="round"
+              />
+            </svg>
             {saveLabel}
           </button>
           <details ref={moreMenuRef} className={styles.moreMenu}>
-            <summary className={styles.iconAction} aria-label="More document actions" title="More document actions">
-              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><circle cx="4" cy="10" r="1.3" /><circle cx="10" cy="10" r="1.3" /><circle cx="16" cy="10" r="1.3" /></svg>
+            <summary
+              className={styles.iconAction}
+              aria-label="More document actions"
+              title="More document actions"
+            >
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <circle cx="4" cy="10" r="1.3" />
+                <circle cx="10" cy="10" r="1.3" />
+                <circle cx="16" cy="10" r="1.3" />
+              </svg>
             </summary>
             <div className={styles.morePanel}>
-              <button type="button" className={styles.mobileMenuAction} onClick={() => { if (moreMenuRef.current) moreMenuRef.current.open = false; fileInputRef.current?.click(); }}>Open .docx</button>
-              <button type="button" className={styles.mobileMenuAction} onClick={() => { if (moreMenuRef.current) moreMenuRef.current.open = false; void onSaveDocx(); }}>Download .docx</button>
-              <div className={styles.logoutItem}><LogoutButton /></div>
+              <button
+                type="button"
+                className={styles.mobileMenuAction}
+                onClick={() => {
+                  if (moreMenuRef.current) moreMenuRef.current.open = false;
+                  fileInputRef.current?.click();
+                }}
+              >
+                Open .docx
+              </button>
+              <button
+                type="button"
+                className={styles.mobileMenuAction}
+                onClick={() => {
+                  if (moreMenuRef.current) moreMenuRef.current.open = false;
+                  void onSaveDocx();
+                }}
+              >
+                Download .docx
+              </button>
+              <div className={styles.logoutItem}>
+                <LogoutButton />
+              </div>
             </div>
           </details>
         </div>
@@ -362,15 +479,28 @@ export function Editor({
             editorRef.current = liveEditor;
             setEditorInstance(liveEditor);
             setIsEditorReady(buffer !== null || newDocument);
-            if (documentId && buffer && performance.getEntriesByName("document-open:body", "mark").length) {
+            if (
+              documentId &&
+              buffer &&
+              performance.getEntriesByName("document-open:body", "mark").length
+            ) {
               performance.mark("document-open:ready");
-              performance.measure("document-open:editor-ready", "document-open:body", "document-open:ready");
-              performance.measure("document-open:total", "document-open:start", "document-open:ready");
+              performance.measure(
+                "document-open:editor-ready",
+                "document-open:body",
+                "document-open:ready",
+              );
+              performance.measure(
+                "document-open:total",
+                "document-open:start",
+                "document-open:ready",
+              );
               performance.clearMarks("document-open:body");
             }
           }}
           onChange={() => {
-            if (currentDocumentId && saveStatus === "saved") setSaveStatus("idle");
+            if (currentDocumentId && saveStatus === "saved")
+              setSaveStatus("idle");
           }}
         >
           <DocxEditor.Menu
@@ -421,7 +551,9 @@ export function Editor({
               className={`${styles.documentStage} flex min-h-0 min-w-0 flex-col overflow-hidden max-[650px]:h-[60dvh]`}
             >
               <DocxEditor.HorizontalRuler className="print:hidden" />
-              <div className={`${styles.scrollArea} relative min-h-0 min-w-0 flex-1 overflow-hidden`}>
+              <div
+                className={`${styles.scrollArea} relative min-h-0 min-w-0 flex-1 overflow-hidden`}
+              >
                 <DocxEditor.Navigation />
                 <DocxEditor.Viewport>
                   <DocxEditor.VerticalRuler className="print:hidden" />
@@ -456,11 +588,28 @@ export function Editor({
             <aside
               className={`${styles.aiPanel} flex min-h-0 min-w-0 flex-col border-l border-[#e3e6eb] bg-white max-[650px]:border-l-0 max-[650px]:border-t`}
             >
-              {isBlank ? <div className={styles.inspectorHeader}><strong>Document assistant</strong></div> : null}
+              {isBlank ? (
+                <div className={styles.inspectorHeader}>
+                  <strong>Document assistant</strong>
+                </div>
+              ) : null}
               {isBlank && (isLoadingDocument || loadError) ? (
-                <div className={styles.inspectorMessage} role={loadError ? "alert" : "status"}>
+                <div
+                  className={styles.inspectorMessage}
+                  role={loadError ? "alert" : "status"}
+                >
                   {loadError || "Opening document…"}
-                  {loadError ? <p className="mt-3"><Link href="/documents" prefetch={true} className="text-brand underline">Back to documents</Link></p> : null}
+                  {loadError ? (
+                    <p className="mt-3">
+                      <Link
+                        href="/documents"
+                        prefetch={true}
+                        className="text-brand underline"
+                      >
+                        Back to documents
+                      </Link>
+                    </p>
+                  ) : null}
                 </div>
               ) : isBlank ? (
                 <button
@@ -476,14 +625,30 @@ export function Editor({
                   }}
                 >
                   <span className={styles.openDocumentIcon} aria-hidden="true">
-                    <svg viewBox="0 0 24 24" fill="none"><path d="M4 19V7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v10H4Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" /><path d="M4 10h16" stroke="currentColor" strokeWidth="1.6" /></svg>
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M4 19V7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v10H4Z"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                        strokeLinejoin="round"
+                      />
+                      <path
+                        d="M4 10h16"
+                        stroke="currentColor"
+                        strokeWidth="1.6"
+                      />
+                    </svg>
                   </span>
                   <strong>Open a Word document</strong>
-                  <span>
-                    Drop a .docx here or browse to start editing.
-                  </span>
+                  <span>Drop a .docx here or browse to start editing.</span>
                 </button>
-              ) : <ChatPanel key={currentDocumentId ?? "unsaved"} documentId={currentDocumentId} editor={isEditorReady ? editorInstance : null} />}
+              ) : (
+                <ChatPanel
+                  key={currentDocumentId ?? "unsaved"}
+                  documentId={currentDocumentId}
+                  editor={isEditorReady ? editorInstance : null}
+                />
+              )}
             </aside>
           </div>
         </DocxEditor.Root>
