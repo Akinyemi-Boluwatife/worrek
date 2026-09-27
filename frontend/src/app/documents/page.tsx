@@ -7,6 +7,8 @@ import { SavedDocumentsSection } from "@/_components/documents/saved-documents-s
 import { Brand } from "@/_components/landing/brand";
 import { SavedDocumentsSkeleton } from "@/_components/documents/saved-documents-skeleton";
 
+export const prefetch = "partial";
+
 export const metadata: Metadata = {
   title: "My documents — Worrek",
   description: "Your saved documents in Worrek.",

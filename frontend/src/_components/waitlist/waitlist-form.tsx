@@ -1,6 +1,6 @@
 "use client";
 
-import { joinWaitlist } from "@/_lib/api";
+import { joinWaitlist } from "@/_lib/waitlist";
 import { useActionState } from "react";
 
 const labelClassName = "block text-[12px] font-semibold text-[#424955]";
