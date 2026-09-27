@@ -1,0 +1,175 @@
+<!DOCTYPE html><html class="h-full bg-slate-50/50" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Worrek — Website Refresh Brief</title>
+<!-- Tailwind CSS CDN with forms and container queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Google Fonts: Inter & Newsreader for editorial craft aesthetic -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+            serif: ['Newsreader', 'Georgia', 'serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              500: '#4f46e5',
+              600: '#4338ca',
+              700: '#3730a3',
+            }
+          },
+          boxShadow: {
+            'doc': '0 1px 3px 0 rgba(0, 0, 0, 0.04), 0 8px 24px -4px rgba(15, 23, 42, 0.06), 0 1px 1px 0 rgba(0,0,0,0.02)',
+            'popover': '0 4px 20px -2px rgba(15, 23, 42, 0.12), 0 2px 6px -1px rgba(15, 23, 42, 0.06)',
+            'card-glow': '0 0 0 1px rgba(79, 70, 229, 0.08), 0 2px 8px -2px rgba(79, 70, 229, 0.08)',
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="h-full font-sans text-slate-800 antialiased overflow-hidden flex flex-col select-none">
+<!-- BEGIN: MainHeader -->
+<header class="h-14 border-b border-slate-200/80 bg-white/90 backdrop-blur-md px-4 flex items-center justify-between z-30 shrink-0 select-none">
+<!-- Left: App Identity, Document Meta & Status -->
+<div class="flex items-center space-x-3.5 min-w-0"><div class="flex items-center space-x-2 shrink-0"><div class="flex items-center justify-center w-8 h-8 rounded-lg bg-slate-100 border border-slate-200"><svg class="w-5 h-5 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" fill="none"><path d="M4 9.5 10 27l8-13 8 13 6-17.5" stroke="#4274dc" stroke-width="5.3" stroke-linecap="round" stroke-linejoin="round"></path><path d="m14 9 4 5.5L22 9" stroke="#4274dc" stroke-width="4.3" stroke-linecap="round" stroke-linejoin="round"></path></svg></div><span class="font-semibold text-slate-900 text-sm tracking-tight">Worrek</span></div><svg class="w-3.5 h-3.5 text-slate-300 stroke-[2.5]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"></path></svg><div class="flex items-center group cursor-pointer space-x-1.5 py-1 px-2 rounded-md hover:bg-slate-100/80 transition-colors"><span class="font-medium text-slate-700 text-sm tracking-tight">Website refresh</span><svg class="w-3 h-3 text-slate-400 group-hover:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></div><div class="hidden sm:flex items-center space-x-1.5 px-2 py-0.5 rounded-full text-[11px] font-medium text-slate-500 bg-slate-100/70 border border-slate-200/60"><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="">Saved to Cloud</span></div></div>
+<!-- Center: View Mode Tabs -->
+<nav class="hidden md:flex items-center bg-slate-100/90 p-1 rounded-lg border border-slate-200/60 text-xs font-medium text-slate-600 space-x-1">
+<button class="px-2.5 py-1 rounded-md bg-white text-slate-900 shadow-sm font-semibold transition-all">Document</button>
+
+<button class="px-2.5 py-1 rounded-md hover:text-slate-900 transition-colors">History</button>
+</nav>
+<!-- Right Controls: Collaboration, Share & AI Toggle -->
+<div class="flex items-center space-x-2">
+<!-- Collaborators Avatar Stack -->
+<div class="hidden lg:flex items-center -space-x-1.5 pr-2">
+<div class="w-6 h-6 rounded-full ring-2 ring-white bg-gradient-to-tr from-amber-400 to-rose-400 flex items-center justify-center text-[10px] font-bold text-white uppercase tracking-tighter" title="Elena Vance">EV</div>
+
+
+</div>
+<!-- Version History -->
+<button class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors" title="History &amp; changes">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<!-- Comments Trigger -->
+<button class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-md transition-colors" title="Comments">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<!-- Share Action -->
+<button class="hidden sm:inline-flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium px-3 py-1.5 rounded-lg shadow-sm transition-colors">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Share</span>
+</button>
+<!-- Worrek AI Active Toggle Badge -->
+<div class="h-6 w-px bg-slate-200 mx-1"></div>
+
+</div>
+</header>
+<!-- END: MainHeader -->
+<!-- BEGIN: DocumentToolbar -->
+<nav class="h-8 border-b border-slate-200/60 bg-white px-4 flex items-center space-x-0.5 text-xs text-slate-600 shrink-0 select-none"><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">File</button><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">Edit</button><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">View</button><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">Insert</button><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">Format</button><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">Tools</button><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">Review</button><button class="px-2 py-1 rounded text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors font-medium">Help</button></nav><div class="h-10 border-b border-slate-200/70 bg-white px-4 flex items-center justify-between text-xs text-slate-700 shrink-0 overflow-x-auto shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
+<div class="flex items-center space-x-1 shrink-0">
+<!-- Undo / Redo -->
+<button class="p-1.5 hover:bg-slate-100 rounded text-slate-500 hover:text-slate-800" title="Undo"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 10h10a5 5 0 015 5v2m-15-7l4-4m-4 4l4 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<button class="p-1.5 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-800" title="Redo"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 10h-10a5 5 0 00-5 5v2m15-7l-4-4m4 4l-4 4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button>
+<div class="h-4 w-px bg-slate-200 mx-1"></div>
+<!-- Text Hierarchy Selector -->
+<div class="flex items-center px-2 py-1 hover:bg-slate-100 rounded cursor-pointer text-slate-700 font-medium">
+<span class="">Normal text</span>
+<svg class="w-3 h-3 ml-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<!-- Typography Style (Serif/Sans) -->
+<div class="flex items-center px-2 py-1 hover:bg-slate-100 rounded cursor-pointer font-serif text-slate-800 text-[13px]">
+<span class="">Newsreader</span>
+<svg class="w-3 h-3 ml-1.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<!-- Size Selector -->
+<div class="flex items-center px-2 py-1 hover:bg-slate-100 rounded cursor-pointer text-slate-700">
+<span class="">11 pt</span>
+<svg class="w-3 h-3 ml-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<div class="h-4 w-px bg-slate-200 mx-1"></div>
+<!-- Standard Inline Formatting -->
+<button class="w-7 h-7 flex items-center justify-center hover:bg-slate-100 rounded font-bold text-slate-700" title="Bold">B</button>
+<button class="w-7 h-7 flex items-center justify-center hover:bg-slate-100 rounded italic font-serif text-slate-700" title="Italic">I</button>
+<button class="w-7 h-7 flex items-center justify-center hover:bg-slate-100 rounded underline underline-offset-2 text-slate-700" title="Underline">U</button>
+<button class="w-7 h-7 flex items-center justify-center hover:bg-slate-100 rounded line-through text-slate-500" title="Strikethrough">S</button>
+<!-- Color Picker -->
+<button class="w-7 h-7 flex flex-col items-center justify-center hover:bg-slate-100 rounded" title="Text Color">
+<span class="font-semibold text-slate-800 text-xs leading-none">A</span>
+<span class="w-3.5 h-0.5 bg-brand-600 mt-0.5 rounded-full"></span>
+</button>
+<div class="h-4 w-px bg-slate-200 mx-1"></div>
+<!-- Alignment & Lists -->
+<button class="p-1.5 bg-slate-100 text-brand-600 rounded" title="Align Left">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded" title="Align Center">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M5 18h14" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded" title="Bullet List">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 6h.01M4 12h.01M4 18h.01M8 6h12M8 12h12M8 18h12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded" title="Numbered List">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 6h13M7 12h13M7 18h13M3 6h.01M3 12h.01M3 18h.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button class="p-1.5 hover:bg-slate-100 text-slate-600 rounded" title="Checklist">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<!-- Quick Inline AI Command Trigger -->
+<div class="hidden xl:flex items-center space-x-2">
+
+</div>
+</div>
+<!-- END: DocumentToolbar -->
+<!-- BEGIN: WorkspaceBody -->
+<main class="flex-1 flex overflow-hidden relative">
+<!-- Center Document Scroll Area -->
+<div class="flex-1 overflow-hidden bg-slate-100/70 p-3 lg:p-4 flex flex-col items-center justify-between custom-scrollbar"><div class="w-full max-w-[820px] h-3 flex items-center justify-between px-10 text-[10px] font-mono text-slate-400 select-none opacity-60"><span class="">| 0</span><span class="">•</span><span class="">•</span><span class="">| 2</span><span class="">•</span><span class="">•</span><span class="">| 4</span><span class="">•</span><span class="">•</span><span class="">| 6</span><span class="">•</span><span class="">•</span><span class="">| 8.5"</span></div><article class="w-full max-w-[820px] bg-white rounded-lg shadow-doc border border-slate-200/70 px-10 py-6 text-slate-800 relative flex flex-col justify-between flex-1 min-h-0" data-purpose="document-page"><div><div class="flex items-center justify-between mb-3 pb-2 border-b border-slate-100"><span class="text-[10px] font-semibold tracking-widest text-slate-400 uppercase font-sans">WORREK / PROJECT BRIEF</span><span class="text-[10px] font-mono text-slate-400">v1.4 • DRAFT</span></div><h1 class="font-serif text-[28px] font-semibold text-slate-900 tracking-tight leading-tight mb-1">Website refresh</h1><p class="font-sans text-sm text-slate-500 font-normal leading-normal mb-3">A clearer story. A better experience.</p><div class="h-px bg-slate-100 w-full mb-3"></div><section class="mb-3"><h2 class="font-sans text-[11px] font-bold text-slate-900 uppercase tracking-wider mb-1.5">Overview</h2><div class="relative group my-1.5"><div class="absolute -top-10 left-0 z-20 flex items-center bg-slate-900 text-white rounded-lg shadow-popover px-1.5 py-1 text-xs space-x-1 animate-in fade-in slide-in-from-bottom-2 duration-150 border border-slate-700"><button class="flex items-center space-x-1.5 px-2 py-0.5 rounded hover:bg-white/15 text-slate-200 hover:text-white font-medium transition-colors"><svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="">Refine</span></button><div class="h-3 w-px bg-white/20"></div><button class="px-2 py-0.5 rounded hover:bg-white/15 text-slate-300 hover:text-white transition-colors">Shorten</button><button class="px-2 py-0.5 rounded hover:bg-white/15 text-slate-300 hover:text-white transition-colors">Tone</button><div class="h-3 w-px bg-white/20"></div><button class="p-0.5 rounded hover:bg-white/15 text-slate-300 hover:text-white transition-colors" title="Comment"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button></div><p class="font-sans text-[13px] leading-[1.6] text-slate-700"><span class="bg-brand-100/90 text-slate-900 px-1 py-0.5 rounded-sm ring-2 ring-brand-200/50 shadow-sm border-b-2 border-brand-500 selection:bg-brand-500 selection:text-white">The goal of this project is to refresh our current website so that people can more easily understand our product, explore what it offers, and find their way around.</span></p></div><p class="font-sans text-[13px] leading-[1.6] text-slate-700 mt-1.5">The new site should help visitors understand what we do, find what they need, and take the next step with confidence.</p></section><section class="mb-3"><h2 class="font-sans text-[11px] font-bold text-slate-900 uppercase tracking-wider mb-1.5">What we're working toward</h2><ul class="space-y-1 font-sans text-[13px] text-slate-700 leading-normal list-disc list-outside ml-5"><li class="pl-1">A focused story, from the first headline to the last detail.</li><li class="pl-1">Simple navigation that makes every page easy to find.</li><li class="pl-1">A consistent experience across desktop and mobile devices.</li></ul></section><section class="mb-2"><h2 class="font-sans text-[11px] font-bold text-slate-900 uppercase tracking-wider mb-1.5">Next steps</h2><p class="font-sans text-[13px] leading-[1.6] text-slate-700">Align on the direction, refine the first draft, and turn the strongest ideas into a plan.</p></section></div><div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[10px] font-mono text-slate-400"><span class="">STUDIO NORTH</span><span class="">PAGE 01</span></div></article><aside class="w-full max-w-[820px] mt-1.5 flex items-center justify-between px-3 py-1 text-xs text-slate-500"><div class="flex items-center space-x-3 text-[11px]"><span class="">Page 1 of 1</span><span class="text-slate-300">•</span><span class="">126 words</span><span class="text-slate-300">•</span><span class="">1 min read</span><span class="text-slate-300">•</span><span class="text-slate-500">English (US)</span></div><div class="flex items-center space-x-2"><button class="hover:text-slate-700 text-slate-400 font-mono text-sm px-1">-</button><div class="w-20 h-1 bg-slate-200 rounded-full relative overflow-hidden"><div class="w-3/4 h-full bg-slate-400 rounded-full"></div></div><button class="hover:text-slate-700 text-slate-400 font-mono text-sm px-1">+</button><span class="font-mono text-[11px] text-slate-400 ml-1">100%</span></div></aside></div>
+<!-- BEGIN: WorrekAIAgentSidebar -->
+<aside class="w-[430px] border-l border-slate-200/80 bg-white flex flex-col justify-between shrink-0 shadow-[-4px_0_16px_rgba(0,0,0,0.02)] z-20" data-purpose="ai-agent-sidebar">
+<!-- Top AI Agent Header -->
+<div class="p-4 border-b border-slate-200/70 flex items-center justify-between bg-slate-50/50"><div class="flex items-center space-x-2.5"><div class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200/80 flex items-center justify-center text-slate-700"><svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75"></path></svg></div><div><h2 class="text-xs font-semibold text-slate-800 tracking-tight">Inspector</h2><p class="text-[11px] text-slate-400 font-normal">Style &amp; Clarity Revisions</p></div></div><div class="flex items-center space-x-1"><button class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors" title="View history"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button><button class="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors" title="Options"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button></div></div>
+<!-- Agent Interaction Conversation Feed -->
+<div class="flex-1 p-4 overflow-y-auto space-y-4 text-xs custom-scrollbar"><div class="flex items-center justify-between border-b border-slate-100 pb-2"><span class="text-[11px] font-semibold tracking-wider text-slate-400 uppercase font-mono">Selection Review</span><span class="text-[11px] text-slate-400 font-mono">1 paragraph</span></div><div class="bg-white border border-slate-200/80 rounded-xl p-3.5 space-y-3 shadow-sm"><div class="flex items-center justify-between"><span class="text-[10px] font-bold tracking-wider uppercase text-slate-700 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">Proposed Revision</span><span class="text-[10px] text-slate-400 font-mono">Concise &amp; Direct</span></div><p class="text-xs text-slate-500 leading-relaxed">Tightens phrasing for direct clarity and stronger narrative cadence:</p><div class="bg-slate-50 border border-slate-200/80 rounded-lg p-3 text-[13px] leading-relaxed text-slate-800 font-medium">“We're refreshing our website to make our product clearer, easier to explore, and simpler to use.”</div><div class="pt-1 flex items-center justify-between"><div class="flex items-center space-x-2"><button class="flex items-center space-x-1.5 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-3 py-1.5 rounded-lg shadow-sm transition-colors"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg><span class="">Apply revision</span></button><button class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg border border-slate-200/80 transition-colors" title="Next variation"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button></div><button class="text-[11px] font-medium text-slate-400 hover:text-slate-600 transition-colors">Copy</button></div></div><div class="pt-2 space-y-2"><p class="text-[10px] font-semibold tracking-wider text-slate-400 uppercase">Alternative Variations</p><div class="flex flex-col space-y-1.5"><button class="text-[11px] bg-slate-50 hover:bg-slate-100 border border-slate-200/70 text-slate-700 px-3 py-2 rounded-lg transition-colors text-left flex items-center justify-between group"><span class="font-medium">Visionary emphasis</span><span class="text-slate-400 group-hover:text-slate-600">→</span></button><button class="text-[11px] bg-slate-50 hover:bg-slate-100 border border-slate-200/70 text-slate-700 px-3 py-2 rounded-lg transition-colors text-left flex items-center justify-between group"><span class="font-medium">Convert to 3 key bullet points</span><span class="text-slate-400 group-hover:text-slate-600">→</span></button><button class="text-[11px] bg-slate-50 hover:bg-slate-100 border border-slate-200/70 text-slate-700 px-3 py-2 rounded-lg transition-colors text-left flex items-center justify-between group"><span class="font-medium">French translation</span><span class="text-slate-400 group-hover:text-slate-600">→</span></button></div></div></div>
+<!-- Docked Bottom AI Input Composer Area -->
+<div class="p-3.5 border-t border-slate-200/80 bg-white"><div class="border border-slate-200 rounded-xl bg-slate-50/50 p-2.5 focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-100 transition-all shadow-sm"><div class="flex items-center justify-between pb-2 mb-2 border-b border-slate-200/60 text-[11px]"><div class="flex items-center space-x-1.5 bg-slate-100 border border-slate-200 text-slate-700 px-2 py-0.5 rounded"><svg class="w-3 h-3 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><span class="font-medium">Target: Selected paragraph</span></div><button class="text-slate-400 hover:text-slate-600" title="Clear target"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button></div><textarea class="w-full bg-transparent border-0 p-0 text-xs text-slate-800 placeholder-slate-400 focus:ring-0 resize-none font-sans leading-relaxed" placeholder="Enter editorial prompt or revision guidelines..." rows="2"></textarea><div class="pt-2 flex items-center justify-between"><div class="flex items-center space-x-1 text-slate-400"><button class="p-1 hover:text-slate-600 hover:bg-slate-200/60 rounded transition-colors" title="Document scope"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button><span class="text-[11px] text-slate-400 font-medium pl-1">Active scope</span></div><button class="w-7 h-7 bg-slate-900 hover:bg-slate-800 text-white rounded-lg flex items-center justify-center transition-all shadow-sm" title="Generate proposal"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path></svg></button></div></div><p class="text-center text-[10px] text-slate-400 mt-2 font-normal">Revisions require confirmation before replacing document copy.</p></div>
+<!-- END: WorrekAIAgentSidebar -->
+</aside>
+</main>
+<!-- END: WorkspaceBody -->
+<style data-purpose="custom-scrollbar">
+    /* Subtle minimalist scrollbar for web editor */
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background-color: rgba(148, 163, 184, 0.35);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background-color: rgba(148, 163, 184, 0.6);
+    }
+  </style>
+
+
+
+
+
+
+</body></html>

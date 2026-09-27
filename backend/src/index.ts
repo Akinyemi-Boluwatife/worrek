@@ -3,6 +3,7 @@ import { cors } from "hono/cors";
 
 import { waitlistRoute } from "./routes/waitlist.route";
 import { documentRoute } from "./routes/document.route";
+import { chatRoute } from "./routes/chat.route";
 import { databaseHealthRoute } from "./routes/databaseHealth.route";
 import { createAuth } from "./lib/better-auth";
 import { trustedOrigins } from "./lib/better-auth/options";
@@ -38,6 +39,7 @@ app.get("/", (c) => {
 
 app.route("/api/waitlist", waitlistRoute);
 app.route("/api/documents", documentRoute);
+app.route("/api/documents", chatRoute);
 app.route("/api/health/database", databaseHealthRoute);
 
 export default app;

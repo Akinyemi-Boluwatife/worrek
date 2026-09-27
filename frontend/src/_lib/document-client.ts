@@ -27,6 +27,42 @@ export type OpenDocumentResult =
     }
   | { success: false; message: string };
 
+const prefetchedDocuments = new Map<
+  string,
+  {
+    promise: Promise<OpenDocumentResult>;
+    controller: AbortController;
+    timeout: ReturnType<typeof setTimeout>;
+  }
+>();
+
+export function forgetPrefetchedDocument(id: string) {
+  const entry = prefetchedDocuments.get(id);
+  if (!entry) return;
+  clearTimeout(entry.timeout);
+  entry.controller.abort();
+  prefetchedDocuments.delete(id);
+}
+
+export function prefetchDocument(id: string) {
+  if (prefetchedDocuments.has(id)) return;
+
+  const controller = new AbortController();
+  const promise = fetchDocument(id, false, controller.signal);
+  const timeout = setTimeout(() => forgetPrefetchedDocument(id), 30_000);
+  prefetchedDocuments.set(id, { promise, controller, timeout });
+  void promise.then((result) => {
+    if (!result.success && prefetchedDocuments.get(id)?.promise === promise) {
+      forgetPrefetchedDocument(id);
+    }
+  });
+
+  if (prefetchedDocuments.size > 2) {
+    const oldestId = prefetchedDocuments.keys().next().value;
+    if (oldestId) forgetPrefetchedDocument(oldestId);
+  }
+}
+
 export async function openDocument(id: string): Promise<OpenDocumentResult> {
   performance.clearMarks("document-open:start");
   performance.clearMarks("document-open:headers");
@@ -34,10 +70,31 @@ export async function openDocument(id: string): Promise<OpenDocumentResult> {
   performance.clearMarks("document-open:ready");
   performance.mark("document-open:start");
 
+  const prefetched = prefetchedDocuments.get(id);
+  if (prefetched) {
+    clearTimeout(prefetched.timeout);
+    prefetchedDocuments.delete(id);
+    const result = await prefetched.promise;
+    if (result.success) {
+      performance.mark("document-open:body");
+      return result;
+    }
+  }
+
+  return fetchDocument(id, true);
+}
+
+async function fetchDocument(
+  id: string,
+  measure: boolean,
+  signal?: AbortSignal,
+): Promise<OpenDocumentResult> {
   try {
-    const response = await fetch(`/api/documents/${encodeURIComponent(id)}/content`);
-    performance.mark("document-open:headers");
-    performance.measure("document-open:request", "document-open:start", "document-open:headers");
+    const response = await fetch(`/api/documents/${encodeURIComponent(id)}/content`, { signal });
+    if (measure) {
+      performance.mark("document-open:headers");
+      performance.measure("document-open:request", "document-open:start", "document-open:headers");
+    }
 
     if (response.status === 404) {
       return { success: false, message: "This document could not be found." };
@@ -59,15 +116,17 @@ export async function openDocument(id: string): Promise<OpenDocumentResult> {
     }
 
     const content = await response.arrayBuffer();
-    performance.mark("document-open:body");
-    performance.measure("document-open:transfer", {
-      start: "document-open:headers",
-      end: "document-open:body",
-      detail: {
-        bytes: content.byteLength,
-        serverTiming: response.headers.get("server-timing"),
-      },
-    });
+    if (measure) {
+      performance.mark("document-open:body");
+      performance.measure("document-open:transfer", {
+        start: "document-open:headers",
+        end: "document-open:body",
+        detail: {
+          bytes: content.byteLength,
+          serverTiming: response.headers.get("server-timing"),
+        },
+      });
+    }
 
     return {
       success: true,
@@ -105,6 +164,7 @@ export async function saveDocument(
 
     if (response.ok) {
       const body = (await response.json()) as { data: DocumentMetadata };
+      forgetPrefetchedDocument(id);
       return { success: true, document: body.data };
     }
 
