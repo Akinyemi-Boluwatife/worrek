@@ -18,7 +18,11 @@ export async function listDocuments(): Promise<DocumentList> {
     return await getCachedDocuments();
   } catch (error) {
     unstable_rethrow(error);
-    return { active: [], trash: [], error: "We couldn't load your documents right now." };
+    return {
+      active: [],
+      trash: [],
+      error: "We couldn't load your documents right now.",
+    };
   }
 }
 
@@ -32,12 +36,12 @@ async function getCachedDocuments(): Promise<DocumentList> {
     api.listDocuments(cookie, "active"),
     api.listDocuments(cookie, "trash"),
   ]);
-  if (responses.some((response) => !response.ok)) throw new Error("Document list failed");
+  if (responses.some((response) => !response.ok))
+    throw new Error("Document list failed");
 
-  const [activeBody, trashBody] = await Promise.all(responses.map((response) => response.json())) as [
-    { data?: DocumentListItem[] },
-    { data?: DocumentListItem[] },
-  ];
+  const [activeBody, trashBody] = (await Promise.all(
+    responses.map((response) => response.json()),
+  )) as [{ data?: DocumentListItem[] }, { data?: DocumentListItem[] }];
   if (!Array.isArray(activeBody.data) || !Array.isArray(trashBody.data)) {
     throw new Error("Invalid documents response");
   }

@@ -4,7 +4,9 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-09-13",
   "compatibility_flags": ["nodejs_compat"],
-  "secrets": { "required": ["BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "DEEPSEEK_API_KEY"] },
+  "secrets": {
+    "required": ["BETTER_AUTH_SECRET", "BETTER_AUTH_URL", "DEEPSEEK_API_KEY"],
+  },
   "hyperdrive": [
     {
       "binding": "HYPERDRIVE",
