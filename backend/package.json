@@ -2,13 +2,17 @@
   "name": "backend",
   "type": "module",
   "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "node --import tsx --test --test-isolation=none tests/*.test.ts",
     "dev": "bash -c 'source .hyperdrive.local && wrangler dev'",
     "deploy": "wrangler deploy --minify",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {
+    "@ai-sdk/deepseek": "^3.0.52",
     "@better-auth/drizzle-adapter": "^1.7.5",
     "@hono/zod-validator": "^0.9.1",
+    "ai": "^7.0.114",
     "better-auth": "^1.7.5",
     "dotenv": "^17.4.2",
     "drizzle-orm": "^1.0.0-rc.4",
@@ -18,8 +22,11 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^5.20260911.1",
+    "@electric-sql/pglite": "^0.5.8",
     "@types/pg": "^8.23.1",
     "drizzle-kit": "^1.0.0-rc.4",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2",
     "wrangler": "^4.110.0"
   }
 }
