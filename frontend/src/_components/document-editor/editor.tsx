@@ -17,6 +17,7 @@ import { renameDocument } from "@/_lib/document-actions";
 import { openDocument, saveDocument, uploadDocument, type OpenDocumentResult } from "@/_lib/document-client";
 import { useEditorStore } from "@/_stores/editor.store";
 import styles from "./editor.module.css";
+import { ChatPanel } from "./chat-panel";
 
 const DOCX_MIME =
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -49,7 +50,8 @@ export function Editor({
   documentLoad?: Promise<OpenDocumentResult>;
 }) {
   const router = useRouter();
-  const editorRef = useRef<{ save: () => Promise<ArrayBuffer> } | null>(null);
+  const editorRef = useRef<DocxEditorInstance | null>(null);
+  const [editorInstance, setEditorInstance] = useState<DocxEditorInstance | null>(null);
   const loadSequence = useRef(0);
   const [buffer, setBuffer] = useState<ArrayBuffer | null>(null);
   const [isLoadingDocument, setIsLoadingDocument] = useState(Boolean(documentId));
@@ -130,6 +132,7 @@ export function Editor({
   async function onFileSelect(file: File) {
     ++loadSequence.current;
     editorRef.current = null;
+    setEditorInstance(null);
     setIsEditorReady(false);
     setIsRenaming(false);
     setRenameError("");
@@ -180,7 +183,9 @@ export function Editor({
     setSaveStatus("saving");
 
     try {
-      const out = await editorRef.current?.save();
+      const editor = editorRef.current;
+      const revisionAtSave = editor?.getDocumentHandle().revision;
+      const out = await editor?.save();
 
       if (!out) {
         setSaveStatus(
@@ -207,6 +212,7 @@ export function Editor({
           id: result.document.id,
           title: result.document.title,
         });
+        if (editor?.getDocumentHandle().revision !== revisionAtSave) setSaveStatus("idle");
         if (!currentDocumentId) router.replace(`/editor/${result.document.id}`);
         return;
       }
@@ -352,7 +358,9 @@ export function Editor({
         <DocxEditor.Root
           document={buffer ?? (newDocument ? "blank" : undefined)}
           onReady={(instance) => {
-            editorRef.current = instance;
+            const liveEditor = instance as DocxEditorInstance;
+            editorRef.current = liveEditor;
+            setEditorInstance(liveEditor);
             setIsEditorReady(buffer !== null || newDocument);
             if (documentId && buffer && performance.getEntriesByName("document-open:body", "mark").length) {
               performance.mark("document-open:ready");
@@ -448,9 +456,7 @@ export function Editor({
             <aside
               className={`${styles.aiPanel} flex min-h-0 min-w-0 flex-col border-l border-[#e3e6eb] bg-white max-[650px]:border-l-0 max-[650px]:border-t`}
             >
-              <div className={styles.inspectorHeader}>
-                <strong>AI Assistant</strong>
-              </div>
+              {isBlank ? <div className={styles.inspectorHeader}><strong>Document assistant</strong></div> : null}
               {isBlank && (isLoadingDocument || loadError) ? (
                 <div className={styles.inspectorMessage} role={loadError ? "alert" : "status"}>
                   {loadError || "Opening document…"}
@@ -477,40 +483,7 @@ export function Editor({
                     Drop a .docx here or browse to start editing.
                   </span>
                 </button>
-              ) : (
-                <>
-                  <div className={styles.inspectorBody}>
-                    <div className={styles.suggestionCard}>
-                      <span className={styles.suggestionBadge}>WRITING WORKSPACE</span>
-                      <h3>No revisions yet</h3>
-                      <p>Write and format your document as usual. Suggested changes will appear here when they’re available.</p>
-                      <div className={styles.suggestionPreview}>
-                        Your document stays in place while you work.
-                      </div>
-                    </div>
-                  </div>
-                  <div className={styles.composerDock}>
-                    <div className={styles.composerBox}>
-                      <div className={styles.composerScope}>
-                        <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M5 5.5h10M5 9h10M5 12.5h7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /><path d="M4 3.5h12v13H4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" /></svg>
-                        <span>Current document</span>
-                      </div>
-                      <input
-                        className={styles.composerInput}
-                        placeholder="Describe a revision or ask a question…"
-                        aria-label="Ask Worrek AI about this document"
-                      />
-                      <div className={styles.composerFooter}>
-                        <span>Worrek AI</span>
-                        <button type="button" className={styles.sendButton} aria-label="Send">
-                          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m0 0-5-5m5 5-5 5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
-                        </button>
-                      </div>
-                    </div>
-                    <p className={styles.composerNote}>You’re in control of every edit.</p>
-                  </div>
-                </>
-              )}
+              ) : <ChatPanel key={currentDocumentId ?? "unsaved"} documentId={currentDocumentId} editor={isEditorReady ? editorInstance : null} />}
             </aside>
           </div>
         </DocxEditor.Root>
