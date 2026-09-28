@@ -9,13 +9,18 @@ import { eq } from "drizzle-orm";
 import { simulateReadableStream } from "ai";
 import { MockLanguageModelV4 } from "ai/test";
 import type { LanguageModelV4StreamPart } from "@ai-sdk/provider";
+import { z } from "zod";
 import { relations } from "../src/db/relations";
 import { document, documentChat, documentChatTurn } from "../src/db/schema";
 import { user } from "../src/db/auth-schema";
 import { ChatRepository } from "../src/lib/chat/repository";
 import {
   chatInputSchema,
+  chatToolResultSchema,
   editBatchSchema,
+  inspectionDataSchema,
+  inspectionRequestSchema,
+  inspectionToolInputSchema,
   snapshotSchema,
   validateEditBatch,
   validateAppliedResult,
@@ -127,6 +132,16 @@ const editParts: LanguageModelV4StreamPart[] = [
     input: JSON.stringify(batch),
   },
 ];
+const inspectionRequest = inspectionRequestSchema.parse({ type: "findText", revision: snapshot.revision, query: "world", matchCase: false });
+
+test("inspection tool parameters use an object schema accepted by the provider", () => {
+  assert.equal(z.toJSONSchema(inspectionToolInputSchema).type, "object");
+  assert.equal(inspectionRequestSchema.safeParse({ type: "findText", revision: snapshot.revision, query: "world", offset: 100 }).success, true);
+  assert.equal(inspectionRequestSchema.safeParse({ type: "findText", revision: snapshot.revision, query: "world", offset: -1 }).success, false);
+});
+const inspectionParts: LanguageModelV4StreamPart[] = [{
+  type: "tool-call", toolCallId: "inspect-1", toolName: "inspectDocument", input: JSON.stringify(inspectionRequest),
+}];
 
 before(async () => {
   // Match Supabase's API roles so the production migration runs unchanged.
@@ -317,6 +332,46 @@ test("acknowledgements must match actual text and formatting changes", () => {
   });
 });
 
+test("validates proposed font and paragraph formatting against the acknowledged snapshot", () => {
+  const fontBatch = editBatchSchema.parse({ revision: snapshot.revision, operations: [{
+    type: "formatText", paragraphId: "p1", expectedText: "Hello world", start: 0, end: 5,
+    bold: null, italic: null, size: 14, color: "#3366CC",
+  }] });
+  validateEditBatch(fontBatch, snapshot);
+  const fontAfter: Snapshot = { ...snapshot, revision: "editor-session:2", paragraphs: [{
+    ...snapshot.paragraphs[0],
+    formatting: [{ start: 0, end: 5, font: { size: 14, color: "#3366CC" } }],
+  }] };
+  validateAppliedResult({ ...pending, batch: fontBatch }, snapshot, fontAfter);
+  assert.throws(() => validateAppliedResult({ ...pending, batch: fontBatch }, snapshot, {
+    ...fontAfter, paragraphs: [{ ...fontAfter.paragraphs[0], formatting: [{ start: 0, end: 5, font: { size: 12, color: "#3366CC" } }] }],
+  }), /font formatting/);
+
+  const paragraphBatch = editBatchSchema.parse({ revision: snapshot.revision, operations: [{
+    type: "formatParagraph", paragraphId: "p1", expectedText: "Hello world", heading: null,
+    list: null, alignment: "Centered", spaceAfter: 6,
+  }] });
+  validateEditBatch(paragraphBatch, snapshot);
+  const paragraphFormat = { style: null, alignment: "Centered" as const, firstLineIndent: null,
+    leftIndent: null, rightIndent: null, lineSpacing: null, spaceBefore: null,
+    spaceAfter: 6, widowControl: null };
+  validateAppliedResult({ ...pending, batch: paragraphBatch }, snapshot, {
+    ...snapshot, revision: "editor-session:2", paragraphs: [{ ...snapshot.paragraphs[0], paragraphFormat }],
+  });
+  assert.throws(() => validateAppliedResult({ ...pending, batch: paragraphBatch }, snapshot, {
+    ...snapshot, revision: "editor-session:2", paragraphs: [{ ...snapshot.paragraphs[0], paragraphFormat: { ...paragraphFormat, spaceAfter: 0 } }],
+  }), /paragraph formatting/);
+
+  assert.equal(editBatchSchema.safeParse({ revision: snapshot.revision, operations: [{
+    type: "formatText", paragraphId: "p1", expectedText: "Hello world", start: 0, end: 5,
+    bold: null, italic: null, color: "red",
+  }] }).success, false);
+  assert.throws(() => validateEditBatch(editBatchSchema.parse({ revision: snapshot.revision, operations: [{
+    type: "formatText", paragraphId: "p1", expectedText: "Hello world", start: 0, end: 5,
+    bold: null, italic: null, subscript: true, superscript: true,
+  }] }), snapshot), /subscript and superscript/);
+});
+
 test("validates insertion, deletion, headings and lists across acknowledged batches", () => {
   const structural: PendingEdit = {
     ...pending,
@@ -472,6 +527,36 @@ test("persists an edit before delivery and confirms it without another model rep
   assert.deepEqual(confirmation.map((event) => event.type), ["turn", "text_delta", "finish"]);
   assert.equal(confirmation[1].type === "text_delta" ? confirmation[1].text : "", "Changes applied to the editor. Save the document to keep them.");
   assert.equal((await repository.history()).turns[0].status, "completed");
+});
+
+test("read-only inspection resumes the model with bounded, verified search results", async () => {
+  const { repository } = await fixture();
+  const { accepted, events } = await run(repository, modelWith(inspectionParts, "tool-calls"));
+  assert.deepEqual(events.map((event) => event.type), ["turn", "text_reset", "inspection_request", "finish"]);
+  assert.equal(events[2].type, "inspection_request");
+  const result = inspectionDataSchema.parse({
+    type: "findText", query: "world", totalMatches: 1,
+    offset: 0, matches: [{ paragraphId: "p1", start: 6, end: 11, context: "Hello world" }], nextOffset: null, truncated: false,
+  });
+  if (result.type !== "findText") throw new Error("Expected a text search result.");
+  const receipt = {
+    kind: "inspection" as const, requestId: crypto.randomUUID(), turnId: accepted.turn.id,
+    toolCallId: "inspect-1", status: "ok" as const, snapshot, result,
+  };
+  assert.equal(chatToolResultSchema.safeParse(receipt).success, true);
+  await assert.rejects(repository.begin({ ...receipt, result: { ...result, offset: 1 } }, "bad-page"), /does not match the current request/);
+  await assert.rejects(repository.begin({ ...receipt, result: { type: "findText", query: "world", totalMatches: 1, offset: 0, matches: [{ paragraphId: "p1", start: 0, end: 5, context: "Hello world" }], nextOffset: null, truncated: false } }, "bad-match"), /does not match the document/);
+  await assert.rejects(repository.begin({ ...receipt, snapshot: applied }, "stale-inspection"), /does not match the current request/);
+  const continuation = await repository.begin(receipt, "inspection-receipt");
+  assert.equal((await repository.begin(receipt, "inspection-receipt")).duplicate, true);
+  const model = modelWith(editParts, "tool-calls");
+  const reply: ChatEvent[] = [];
+  await generateChat({ ...continuation, repository, model, title: "Draft", signal: new AbortController().signal, emit: async (event) => { reply.push(event); } });
+  assert.equal(model.doStreamCalls.length, 1);
+  assert.deepEqual(reply.map((event) => event.type), ["turn", "text_reset", "edit_request", "finish"]);
+  const stored = (await repository.history()).turns[0];
+  assert.equal(stored.status, "awaiting_tools");
+  assert.equal(stored.messages.some((message) => message.role === "tool" && JSON.stringify(message).includes("inspectDocument")), true);
 });
 
 test("unverified narration is cleared when a validated edit is offered", async () => {
