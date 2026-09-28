@@ -1,10 +1,11 @@
-import type { ChatSnapshot, PendingChatEdit } from "./chat-editor";
+import type { ChatSnapshot, InspectionOutcome, PendingChatEdit, PendingChatInspection } from "./chatEditor";
 
 export type ChatEvent =
   | { type: "turn"; turnId: string }
   | { type: "text_delta"; text: string }
   | { type: "text_reset"; turnId: string }
   | { type: "edit_request"; turnId: string; edit: PendingChatEdit }
+  | { type: "inspection_request"; turnId: string; inspection: PendingChatInspection }
   | { type: "finish"; turnId: string; status: "completed" | "awaiting_tools" }
   | { type: "error"; turnId: string; message: string };
 
@@ -12,8 +13,8 @@ export type StoredTurn = {
   id: string;
   sequence: number;
   status: string;
-  messages: Array<{ role: string; content: string | Array<{ type: string; text?: string; output?: { value?: { status?: string } } }> }>;
-  pendingEdit: PendingChatEdit | null;
+  messages: Array<{ role: string; content: string | Array<{ type: string; text?: string; toolName?: string; output?: { value?: { status?: string } } }> }>;
+  pendingEdit: PendingChatEdit | PendingChatInspection | null;
 };
 
 const endpoint = (documentId: string) => `/api/documents/${encodeURIComponent(documentId)}/chat`;
@@ -99,7 +100,12 @@ export function displayHistory(turns: StoredTurn[]): ChatDisplay[] {
     }
     if (message.role === "tool" && Array.isArray(message.content)) {
       if (turn.messages.slice(index + 1).some((later) => later.role === "assistant")) return [];
-      const status = message.content.find((part) => part.type === "tool-result")?.output?.value?.status;
+      const tool = message.content.find((part) => part.type === "tool-result");
+      const status = tool?.output?.value?.status;
+      if (tool?.toolName === "inspectDocument") {
+        if (status === "ok") return [{ id: `${turn.id}:${index}`, role: "status" as const, text: "Document inspection completed." }];
+        return [{ id: `${turn.id}:${index}`, role: "status" as const, text: "Document inspection could not be completed." }];
+      }
       if (status === "applied") return [{ id: `${turn.id}:${index}`, role: "status" as const, text: "Changes applied to the editor. Save the document to keep them." }];
       if (status === "rejected") return [{ id: `${turn.id}:${index}`, role: "status" as const, text: "Suggestion rejected." }];
       if (status === "conflict" || status === "failed") return [{ id: `${turn.id}:${index}`, role: "status" as const, text: "Suggestion could not be applied." }];
@@ -110,4 +116,8 @@ export function displayHistory(turns: StoredTurn[]): ChatDisplay[] {
 
 export function toolResultBody(turnId: string, toolCallId: string, status: string, snapshot: ChatSnapshot, message?: string) {
   return { requestId: crypto.randomUUID(), turnId, toolCallId, status, snapshot, ...(message ? { message } : {}) };
+}
+
+export function inspectionResultBody(turnId: string, toolCallId: string, outcome: InspectionOutcome) {
+  return { kind: "inspection", requestId: crypto.randomUUID(), turnId, toolCallId, ...outcome };
 }

@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { unstable_rethrow } from "next/navigation";
 
 import { api } from "./apiConstants";
-import type { DocumentListItem } from "./document-client";
+import type { DocumentListItem } from "./documentClient";
 
 type DocumentList = {
   active: DocumentListItem[];

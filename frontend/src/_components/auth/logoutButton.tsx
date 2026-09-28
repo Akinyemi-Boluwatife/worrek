@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { authClient } from "@/_lib/auth-client";
+import { authClient } from "@/_lib/authClient";
 
 export function LogoutButton() {
   const [isPending, setIsPending] = useState(false);

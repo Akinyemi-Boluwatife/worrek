@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { LogoutButton } from "@/_components/auth/logout-button";
-import { DocumentsActions } from "@/_components/documents/documents-actions";
-import { SavedDocumentsSection } from "@/_components/documents/saved-documents-section";
+import { LogoutButton } from "@/_components/auth/logoutButton";
+import { DocumentsActions } from "@/_components/documents/documentsActions";
+import { SavedDocumentsSection } from "@/_components/documents/savedDocumentsSection";
 import { Brand } from "@/_components/landing/brand";
-import { SavedDocumentsSkeleton } from "@/_components/documents/saved-documents-skeleton";
+import { SavedDocumentsSkeleton } from "@/_components/documents/savedDocumentsSkeleton";
 
 export const prefetch = "partial";
 

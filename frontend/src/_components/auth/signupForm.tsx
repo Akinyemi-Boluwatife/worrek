@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 
-import { authClient } from "@/_lib/auth-client";
+import { authClient } from "@/_lib/authClient";
 import {
   authButtonClassName,
   authErrorClassName,
   authFieldClassName,
   authLabelClassName,
-} from "./form-styles";
-import { PasswordField } from "./password-field";
+} from "./formStyles";
+import { PasswordField } from "./passwordField";
 
 const strengthBars = [0, 1, 2, 3];
 

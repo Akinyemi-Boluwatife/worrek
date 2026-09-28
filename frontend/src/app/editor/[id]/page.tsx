@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
-import { EditorLoadingShell } from "@/_components/document-editor/editor-loading-shell";
-import { EditorPageContent } from "@/_components/document-editor/editor-page-content";
+import { EditorLoadingShell } from "@/_components/documentEditor/editorLoadingShell";
+import { EditorPageContent } from "@/_components/documentEditor/editorPageContent";
 
 export const metadata: Metadata = {
   title: "Edit document — Worrek",

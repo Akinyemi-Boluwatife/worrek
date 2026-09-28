@@ -1,5 +1,5 @@
 import { Brand } from "./brand";
-import { EarlyAccessLink } from "./early-access-link";
+import { EarlyAccessLink } from "./earlyAccessLink";
 
 export function SiteHeader() {
   return (

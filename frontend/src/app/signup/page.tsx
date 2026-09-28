@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
-import { AuthHeader } from "@/_components/auth/auth-header";
-import { SignupCard } from "@/_components/auth/signup-card";
+import { AuthHeader } from "@/_components/auth/authHeader";
+import { SignupCard } from "@/_components/auth/signupCard";
 
 export const metadata: Metadata = {
   title: "Create your account — Worrek",

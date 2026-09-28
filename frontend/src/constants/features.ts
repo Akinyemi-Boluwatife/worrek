@@ -3,7 +3,7 @@ import {
   InstructionsDemo,
   ReviewDemo,
   WorkflowDemo,
-} from "@/_components/landing/feature-demos";
+} from "@/_components/landing/featureDemos";
 import type { ComponentType } from "react";
 
 export type Feature = {

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { DocxEditorInstance } from "@docx-editor.dev/core/editor";
 
-import { openDocument, type OpenDocumentResult } from "@/_lib/document-client";
+import { openDocument, type OpenDocumentResult } from "@/_lib/documentClient";
 import { useEditorStore } from "@/_stores/editor.store";
 
 export function useEditorDocumentLoad({

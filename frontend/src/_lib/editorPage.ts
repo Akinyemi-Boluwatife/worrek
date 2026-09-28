@@ -1,7 +1,7 @@
 import type { DocxEditorInstance } from "@docx-editor.dev/core/editor";
 
-import { renameDocument } from "@/_lib/document-actions";
-import { saveDocument, uploadDocument } from "@/_lib/document-client";
+import { renameDocument } from "@/_lib/documentActions";
+import { saveDocument, uploadDocument } from "@/_lib/documentClient";
 
 const DOCX_MIME =
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document";

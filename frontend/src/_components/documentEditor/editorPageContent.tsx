@@ -1,8 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { EditorLoadingShell } from "./editor-loading-shell";
-import { useEditorPageContent } from "@/_lib/use-editor-page-content";
+import { EditorLoadingShell } from "./editorLoadingShell";
+import { useEditorPageContent } from "@/_lib/useEditorPageContent";
 
 const Editor = dynamic(
   () => import("./editor").then((module) => module.Editor),
