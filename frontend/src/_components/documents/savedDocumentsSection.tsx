@@ -1,7 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 
-import { DocumentsList } from "@/_components/documents/documents-list";
-import { listDocuments } from "@/_lib/document-list";
+import { DocumentsList } from "@/_components/documents/documentsList";
+import { listDocuments } from "@/_lib/documentList";
 
 export async function SavedDocumentsSection() {
   "use cache: private";

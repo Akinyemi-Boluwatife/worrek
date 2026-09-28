@@ -1,4 +1,4 @@
-import { proxyDocumentChat } from "@/_lib/chat-proxy";
+import { proxyDocumentChat } from "@/_lib/chatProxy";
 
 export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

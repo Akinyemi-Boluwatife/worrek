@@ -1,4 +1,4 @@
-import { EditorIcon } from "./editor-icon";
+import { EditorIcon } from "./editorIcon";
 import styles from "./illustrations.module.css";
 
 export function EditorPreview() {

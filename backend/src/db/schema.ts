@@ -16,7 +16,7 @@ import {
 
 import { user } from "./auth-schema";
 import type { ModelMessage } from "ai";
-import type { Snapshot, PendingEdit, TurnStatus } from "../lib/chat/contracts";
+import type { Snapshot, PendingTool, TurnStatus } from "../lib/chat/contracts";
 
 export const waitlistStatus = pgEnum("waitlist_status", [
   "waiting",
@@ -110,7 +110,7 @@ export const documentChatTurn = pgTable.withRLS("document_chat_turn", {
   status: text("status").$type<TurnStatus>().notNull(),
   messages: jsonb("messages").$type<ModelMessage[]>().notNull().default([]),
   snapshot: jsonb("snapshot").$type<Snapshot>().notNull(),
-  pendingEdit: jsonb("pending_edit").$type<PendingEdit | null>(),
+  pendingEdit: jsonb("pending_edit").$type<PendingTool | null>(),
   stepCount: integer("step_count").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),

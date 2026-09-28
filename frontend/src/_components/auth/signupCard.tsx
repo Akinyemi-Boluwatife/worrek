@@ -1,15 +1,15 @@
 import Link from "next/link";
 
-import { AuthDivider } from "./auth-divider";
+import { AuthDivider } from "./authDivider";
 import {
   authCardClassName,
   authDescriptionClassName,
   authFootnoteClassName,
   authHeadingClassName,
   authLinkClassName,
-} from "./form-styles";
-import { SignupForm } from "./signup-form";
-import { SocialAuthButtons } from "./social-auth-buttons";
+} from "./formStyles";
+import { SignupForm } from "./signupForm";
+import { SocialAuthButtons } from "./socialAuthButtons";
 
 export function SignupCard() {
   return (

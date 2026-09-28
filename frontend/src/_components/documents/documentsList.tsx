@@ -3,8 +3,8 @@
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { deleteDocumentForever, moveDocumentToTrash, renameDocument, restoreDocument } from "@/_lib/document-actions";
-import { forgetPrefetchedDocument, prefetchDocument, type DocumentListItem } from "@/_lib/document-client";
+import { deleteDocumentForever, moveDocumentToTrash, renameDocument, restoreDocument } from "@/_lib/documentActions";
+import { forgetPrefetchedDocument, prefetchDocument, type DocumentListItem } from "@/_lib/documentClient";
 import { formatDate, formatSize } from "@/_lib/utils";
 
 type View = "active" | "trash";
@@ -29,7 +29,7 @@ export function DocumentsList({ active, trash, error }: { active: DocumentListIt
 
   useEffect(() => {
     if (active[0]) prefetchDocument(active[0].id);
-    if (active.length) void import("@/_components/document-editor/editor").catch(() => {});
+    if (active.length) void import("@/_components/documentEditor/editor").catch(() => {});
   }, [active]);
 
   useEffect(() => {

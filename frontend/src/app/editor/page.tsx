@@ -1,4 +1,4 @@
-import { EditorPageContent } from "@/_components/document-editor/editor-page-content";
+import { EditorPageContent } from "@/_components/documentEditor/editorPageContent";
 
 export default function EditorPage() {
   return <EditorPageContent />;

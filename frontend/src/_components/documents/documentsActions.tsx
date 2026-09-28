@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
 
-import { uploadDocument } from "@/_lib/document-client";
+import { uploadDocument } from "@/_lib/documentClient";
 
 const MAX_DOCX_BYTES = 10 * 1024 * 1024;
 

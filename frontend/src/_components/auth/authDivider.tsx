@@ -2,7 +2,7 @@ import {
   authDividerClassName,
   authDividerLabelClassName,
   authDividerLineClassName,
-} from "./form-styles";
+} from "./formStyles";
 
 export function AuthDivider({ label }: { label: string }) {
   return (

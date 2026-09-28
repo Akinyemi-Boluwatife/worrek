@@ -1,4 +1,4 @@
-import { EditorPreview } from "./editor-preview";
+import { EditorPreview } from "./editorPreview";
 
 export function ProductPreview() {
   return (

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { authFieldClassName, authLabelClassName } from "./form-styles";
+import { authFieldClassName, authLabelClassName } from "./formStyles";
 
 type PasswordFieldProps = {
   value: string;

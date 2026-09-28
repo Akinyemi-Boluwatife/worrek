@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
-import { openDocument, type OpenDocumentResult } from "@/_lib/document-client";
+import { openDocument, type OpenDocumentResult } from "@/_lib/documentClient";
 
 type PendingDocumentLoad = {
   id: string;

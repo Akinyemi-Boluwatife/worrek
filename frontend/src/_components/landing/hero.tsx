@@ -1,5 +1,5 @@
-import { EarlyAccessLink } from "./early-access-link";
-import { HeroOrnaments } from "./hero-ornaments";
+import { EarlyAccessLink } from "./earlyAccessLink";
+import { HeroOrnaments } from "./heroOrnaments";
 
 export function Hero() {
   return (

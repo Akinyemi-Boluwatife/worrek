@@ -1,6 +1,6 @@
 import type { Feature } from "@/constants/features";
 
-import { FeatureItem } from "./feature-item";
+import { FeatureItem } from "./featureItem";
 
 type FeaturesListProps = {
   features: readonly Feature[];

@@ -1,4 +1,4 @@
-import { FeatureDemo } from "./feature-demo";
+import { FeatureDemo } from "./featureDemo";
 import styles from "./illustrations.module.css";
 
 export function InstructionsDemo() {

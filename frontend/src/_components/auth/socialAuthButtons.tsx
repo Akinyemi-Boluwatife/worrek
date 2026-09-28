@@ -1,4 +1,4 @@
-import { authSocialButtonClassName } from "./form-styles";
+import { authSocialButtonClassName } from "./formStyles";
 
 function GoogleIcon() {
   return (
