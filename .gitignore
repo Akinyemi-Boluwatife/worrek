@@ -10,8 +10,10 @@ skills-lock.json
 AGENTS.md
 CLAUDE.md
 docs/hono-llms-full.txt
-README.md
 .DS_Store
 *.log
 Reports/
 post/
+
+# Local implementation planning
+docs/llm-editor-access-plan.md
