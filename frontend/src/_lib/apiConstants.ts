@@ -13,19 +13,6 @@ function request(path: string, init?: RequestInit) {
 export const api = {
   databaseHealth: () => request("/api/health/database"),
 
-  joinWaitlist: (body: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    referralPlatform: string;
-    marketingConsent: boolean;
-  }) =>
-    request("/api/waitlist", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    }),
-
   uploadDocument: (body: FormData, cookie?: string) =>
     request("/api/documents", {
       method: "POST",

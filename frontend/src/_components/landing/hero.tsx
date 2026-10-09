@@ -1,4 +1,4 @@
-import { EarlyAccessLink } from "./earlyAccessLink";
+import { LoginLink } from "./loginLink";
 import { HeroOrnaments } from "./heroOrnaments";
 
 export function Hero() {
@@ -19,7 +19,7 @@ export function Hero() {
         Worrek uses AI to make working with documents faster, easier, and more
         efficient.
       </p>
-      <EarlyAccessLink />
+      <LoginLink />
       <HeroOrnaments />
     </section>
   );
